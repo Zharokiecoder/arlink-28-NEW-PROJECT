@@ -13,6 +13,16 @@
 	}
 }
 
+# Allow direct IP access over HTTP and HTTPS for testing
+http://69.62.107.166 {
+	reverse_proxy web:3000
+}
+
+https://69.62.107.166 {
+	tls internal
+	reverse_proxy web:3000
+}
+
 api.arlink28.com {
 	import common
 	# The API docs are for developers on a laptop, not the public internet.
