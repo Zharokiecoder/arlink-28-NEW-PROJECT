@@ -1,0 +1,34 @@
+## .NET / C#
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+.vs/
+.idea/
+
+## Secrets
+appsettings.Development.json
+appsettings.*.local.json
+secrets.json
+
+## Claude Code local settings
+.claude/
+
+## Local storage
+local-storage/
+
+## Logs
+logs/
+*.log
+
+## EF Core temp
+# ...but docs/migrations holds the project's reviewed SQL scripts, which are kept.
+!docs/migrations/
+
+## Temp tools
+.migration-runner/
+
+## OS
+.DS_Store
+Thumbs.db

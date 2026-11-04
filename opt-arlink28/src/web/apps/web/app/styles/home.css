@@ -1,0 +1,4975 @@
+/* Homepage. Satoshi throughout, one scale, 12 px corners, hairline cards, photography for colour. Colours come
+   from tokens.css so the page follows light or dark. The hero quote panel sits on a photo, so it carries its
+   own always-light-on-dark colours. See docs/homepage-design.md. */
+
+.hm {
+  font-family: var(--font);
+  color: var(--ink);
+  overflow-x: clip;
+}
+.hm h1,
+.hm h2,
+.hm h3 {
+  font-family: var(--font);
+  font-weight: 700;
+  letter-spacing: var(--track);
+  line-height: 1;
+  text-wrap: balance;
+}
+.hm p {
+  text-wrap: pretty;
+}
+.hm li {
+  list-style: none;
+}
+.hm img {
+  display: block;
+}
+.hm .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.hm-placeholder {
+  opacity: 0.78;
+}
+
+/* A gentler curve than the site's quick one: slow start, long even glide, soft landing. */
+.hm {
+  --ease-soft: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-glide: cubic-bezier(0.25, 0.46, 0.2, 1);
+}
+
+/* ---- Motion: appear on scroll (opacity and transform only) ---------------------------------- */
+.hm [data-rv] {
+  transform: translateY(var(--ty, 0px));
+  transition:
+    opacity 1.4s var(--ease-soft) calc(var(--i, 0) * 150ms),
+    transform 1.6s var(--ease-glide) calc(var(--i, 0) * 150ms);
+}
+.hm.rv-ready [data-rv]:not(.is-in) {
+  opacity: 0.001;
+  --ty: 36px;
+  will-change: transform, opacity;
+}
+/* A photo card's picture settles from slightly zoomed-in as the card arrives, so the card seems to focus. */
+.hm .hm-routes li img,
+.hm .hm-pkgs li img {
+  scale: 1;
+  transition:
+    scale 2s var(--ease-glide) calc(var(--i, 0) * 140ms),
+    transform 1.3s var(--ease-glide);
+}
+.hm.rv-ready .hm-routes li[data-rv]:not(.is-in) img,
+.hm.rv-ready .hm-pkgs li[data-rv]:not(.is-in) img {
+  scale: 1.14;
+}
+
+/* Smooth anchor and in-page scrolling, kept off for people who ask for less motion. */
+html:has(.hm) {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.hm) {
+    scroll-behavior: auto;
+  }
+}
+
+/* The pill on each section title fades up just ahead of its heading. */
+.hm .hm-sticker {
+  translate: 0 0;
+  transition:
+    opacity 0.6s var(--ease),
+    translate 0.8s var(--ease-glide);
+}
+.hm.rv-ready [data-rv]:not(.is-in) .hm-sticker {
+  opacity: 0;
+  translate: 0 8px;
+}
+
+/* The closing call to action moves further than the rest: the copy rises in line by line, and the three
+   photos drop in from below and settle one after another. */
+.hm .hm-deals [data-rv] {
+  --ty: 0px;
+  --sc: 1;
+  transform: translateY(var(--ty)) scale(var(--sc));
+  transition-duration: 0.85s;
+}
+.hm.rv-ready .hm-deals [data-rv]:not(.is-in) {
+  --ty: 28px;
+}
+.hm.rv-ready .hm-deals-photos [data-rv]:not(.is-in) {
+  --ty: 70px;
+  --sc: 0.88;
+}
+.hm .hm-deals-photos [data-rv] {
+  transition-delay: calc(var(--i, 0) * 140ms);
+}
+
+/* ---- Buttons -------------------------------------------------------------------------------- */
+.hm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 13px 22px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font: 700 14px/1 var(--font);
+  text-transform: capitalize;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.25s var(--ease),
+    color 0.25s var(--ease),
+    border-color 0.25s var(--ease);
+}
+/* A round badge ends every button that has no icon of its own: the arrow is cut out of a circle, as on the
+   card badges. On hover the badge turns a quarter-turn so the arrow points straight on; nothing glows or lifts. */
+.hm-btn:not(:has(i)) {
+  padding: 9px 9px 9px 22px;
+}
+.hm-btn:not(:has(i))::before {
+  content: "";
+  flex: none;
+  order: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: currentColor;
+  -webkit-mask:
+    linear-gradient(#000 0 0),
+    var(--btn-arrow) center / 16px 16px no-repeat;
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0),
+    var(--btn-arrow) center / 16px 16px no-repeat;
+  mask-composite: exclude;
+  transition: transform 0.5s var(--ease);
+}
+.hm-btn:not(:has(i)):hover::before,
+.hm-btn:not(:has(i)):focus-visible::before {
+  transform: rotate(45deg);
+}
+.hm-btn:focus-visible,
+.hm-seg button:focus-visible,
+.hm-trip button:focus-visible,
+.hm-routes button:focus-visible,
+.hm-faq-q:focus-visible,
+.hm-badge:focus-visible,
+.hm-pkgs a:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.hm-quote .hm-btn:focus-visible,
+.hm-quote button:focus-visible,
+.hm-hero-card .hm-btn:focus-visible,
+.hm-banner .hm-btn:focus-visible,
+.hm-banner a:focus-visible,
+.hm-routes button:focus-visible,
+.hm-pkgs a:focus-visible {
+  outline-color: #fff;
+}
+.hm-btn-primary {
+  background: var(--red);
+  color: #fff;
+}
+.hm-btn-primary:hover {
+  background: var(--red-hover);
+}
+.hm-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+.hm-btn-dark {
+  background: var(--ink);
+  color: var(--canvas);
+}
+.hm-btn-dark:hover {
+  background: var(--ink-2);
+}
+.hm-btn-quiet,
+.hm-btn-wa {
+  background: var(--btn2-bg);
+  color: var(--btn2-ink);
+  border-color: var(--btn2-line);
+}
+.hm-btn-quiet:hover,
+.hm-btn-wa:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--canvas);
+}
+.hm-btn-glass {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+}
+.hm-btn-glass:hover {
+  background: rgba(255, 255, 255, 0.24);
+}
+.hm-block {
+  width: 100%;
+}
+.hm-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.hm-link-light {
+  color: #fff;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+  padding-bottom: 2px;
+}
+
+/* ---- Hero ----------------------------------------------------------------------------------- */
+.hm-hero {
+  padding: 0;
+}
+/* Full bleed: the photo runs edge to edge and top to bottom of the screen, and the fixed header floats over it. */
+.hm-hero-card {
+  position: relative;
+  isolation: isolate;
+  /* One screen, no scrolling: the card is exactly as tall as the window. The copy and the quote panel share the top
+     row, the slider strip runs full width under them, and the spacing and thumbnails shrink on short windows. */
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(400px, 23vw, 540px);
+  grid-template-rows: 1fr auto;
+  column-gap: clamp(24px, 2.4vw, 40px);
+  row-gap: clamp(14px, 2vh, 28px);
+  height: 100svh;
+  min-height: 540px;
+  padding: calc(var(--header-h) + clamp(10px, 1.6vh, 24px)) clamp(24px, 3.4vw, 60px) clamp(28px, 4.4vh, 60px);
+  overflow: hidden;
+  color: #fff;
+  background: #0b1018;
+}
+.hm-slides {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  overflow: hidden;
+}
+/* Every photo is stacked full size. The current one is on top, the one before it sits underneath until the
+   blinds have finished opening, and the rest stay hidden. */
+.hm-slide {
+  position: absolute;
+  inset: 0;
+  visibility: hidden;
+}
+.hm-slide.is-prev {
+  visibility: visible;
+  z-index: 1;
+}
+.hm-slide.is-on {
+  visibility: visible;
+  z-index: 2;
+}
+.hm-slide-zoom,
+.hm-slide img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.hm-slide img {
+  object-fit: cover;
+  object-position: 50% 55%;
+}
+/* The slow drift: a photo grows by about 8% while it is shown. It stays where it ended when it is covered, so the
+   change of photo never jumps. The photos are exported at their full width, so the zoom stays sharp. */
+.hm-slide.is-on .hm-slide-zoom,
+.hm-slide.is-prev .hm-slide-zoom {
+  animation: hm-drift var(--slide-ms, 8s) linear forwards;
+}
+@keyframes hm-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.08);
+  }
+}
+.hm-slides.is-paused .hm-slide-zoom {
+  animation-play-state: paused;
+}
+/* Reduced motion: no blinds and no drift, just a quick crossfade. */
+.hm-slides.is-reduced .hm-slide {
+  visibility: visible;
+  opacity: 0;
+  transition: opacity 0.25s linear;
+}
+.hm-slides.is-reduced .hm-slide.is-on {
+  opacity: 1;
+}
+.hm-slides.is-reduced .hm-slide-zoom {
+  animation: none;
+}
+
+/* The strip along the bottom: place and count on the left, one thumbnail per slide on the right. */
+.hm-slider {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 40px;
+  align-items: end;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.34);
+}
+.hm-slider-line {
+  display: flex;
+  align-items: baseline;
+  gap: 28px;
+  margin: 0 0 12px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.hm-slider-line i {
+  font-style: normal;
+  opacity: 0.6;
+  padding: 0 2px;
+}
+.hm-slider-count {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+.hm-slider-blurb {
+  max-width: 30ch;
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+.hm-slider-nav {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+}
+.hm-slider-thumbs {
+  display: flex;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hm-slider-thumbs button {
+  display: block;
+  width: clamp(84px, 6.6vw, 112px);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  opacity: 0.72;
+  transition: opacity 0.25s ease;
+}
+.hm-slider-thumbs button:hover,
+.hm-slider-thumbs button.is-on {
+  opacity: 1;
+}
+.hm-slider-thumbs button:focus-visible,
+.hm-slider-pause:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+.hm-slider-num {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+.hm-slider-frame {
+  display: block;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.hm-slider-thumbs img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  transition: transform 0.8s cubic-bezier(0.24, 0.43, 0.15, 0.97);
+}
+.hm-slider-thumbs button:hover img {
+  transform: scale(1.08);
+}
+/* The current thumbnail drifts closer in step with the progress bar under it. */
+.hm-slider-thumbs button.is-on img {
+  animation: hm-thumb-drift var(--slide-ms, 7s) linear forwards;
+}
+.hm-slider.is-paused .hm-slider-thumbs button.is-on img {
+  animation-play-state: paused;
+}
+@keyframes hm-thumb-drift {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.12);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-slider-thumbs img,
+  .hm-slider-thumbs button.is-on img {
+    animation: none;
+    transition: none;
+  }
+}
+
+/* Rolling text: every line of a set sits in the same spot behind a mask. The new one rolls up into view a moment after
+   the old one starts rolling up and out; any other line waits below, out of sight. */
+.hm-roll {
+  display: grid;
+  overflow: hidden;
+  padding: 0.12em 0;
+  margin: -0.12em 0;
+}
+.hm-roll > span {
+  grid-area: 1 / 1;
+  transform: translateY(115%);
+}
+.hm-roll > span.is-on {
+  transform: none;
+  transition: transform 1.25s cubic-bezier(0.16, 1, 0.3, 1) 0.28s;
+}
+.hm-roll > span.is-prev {
+  transform: translateY(-115%);
+  transition: transform 1.1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-roll > span.is-on,
+  .hm-roll > span.is-prev {
+    transition: none;
+  }
+}
+.hm-slider-bar {
+  position: relative;
+  display: block;
+  height: 2px;
+  margin-top: 8px;
+  background: rgba(255, 255, 255, 0.28);
+}
+.hm-slider-bar span {
+  position: absolute;
+  inset: 0;
+  background: #fff;
+  transform-origin: left;
+}
+.hm-slider-bar span.is-running {
+  animation: hm-slide-progress linear forwards;
+}
+@keyframes hm-slide-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+.hm-slider-pause {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  margin-bottom: -6px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+}
+.hm-slider-pause svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.hm-hero-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(5, 9, 15, 0.35) 0%,
+      rgba(5, 9, 15, 0) 30%,
+      rgba(5, 9, 15, 0.12) 55%,
+      rgba(5, 9, 15, 0.78) 100%
+    ),
+    linear-gradient(90deg, rgba(5, 9, 15, 0.5) 0%, rgba(5, 9, 15, 0) 60%);
+}
+.hm-rating {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.78);
+}
+.hm-rating-score {
+  color: #f5b301;
+  font-weight: 700;
+}
+
+/* The wrapper only groups the copy and the panel; both are placed on the card's own grid. */
+.hm-hero-body {
+  display: contents;
+}
+.hm-hero-card .hm-hero-copy {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: end;
+}
+.hm-hero-card .hm-quote {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: end;
+}
+.hm-hero-card .hm-slider {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+/* Reading order is the heading, the line under it, then the rating; the rating is drawn first, above the heading.
+   The panel sits bottom right. */
+.hm-hero-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.hm-hero-copy .hm-rating {
+  order: -1;
+}
+.hm-hero-sub {
+  max-width: 36em;
+  margin: 4px 0 0;
+  font-size: clamp(15px, 1.25vw, 21px);
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.88);
+}
+.hm-hero h1 {
+  font-family: var(--font-hero);
+  font-weight: 300;
+  font-size: clamp(36px, 4.45vw, 104px);
+  line-height: 1;
+  max-width: 11.5em;
+  margin: 0;
+}
+/* Desktop: the heading is as big as the column beside the quote panel allows while still setting in two lines. The size
+   follows the column's width (cqw), so it never runs under the panel. Below 1025px the hero stacks and the heading
+   keeps its smaller, wrapping size. */
+@media (min-width: 1025px) {
+  .hm-hero .hm-hero-copy {
+    container-type: inline-size;
+  }
+  .hm-hero h1 {
+    font-size: clamp(40px, 11cqw, 176px);
+    letter-spacing: -0.04em;
+    max-width: none;
+    text-wrap: balance;
+  }
+}
+.hm-quote-assure {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--p-line);
+  font-size: 13px;
+}
+/* Each reassurance is a pill: a small tick, then the words. */
+.hm-quote-assure li {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px 6px 10px;
+  border: 1px solid var(--p-line);
+  border-radius: 999px;
+  background: var(--p-field);
+  color: var(--p-ink);
+  font-weight: 500;
+  line-height: 1.2;
+}
+.hm-quote-assure li::before {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m3 8.5 3.2 3.2L13 4.8'/></svg>")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m3 8.5 3.2 3.2L13 4.8'/></svg>")
+    center / contain no-repeat;
+}
+
+@media (min-width: 1025px) and (max-height: 780px) {
+  .hm-hero-card .hm-quote-assure {
+    display: none;
+  }
+  .hm-slider-blurb {
+    display: none;
+  }
+}
+@media (min-width: 1025px) and (max-height: 700px) {
+  .hm-slider-thumbs button {
+    width: 76px;
+  }
+  .hm-slider-num {
+    margin-bottom: 3px;
+    font-size: 12px;
+  }
+}
+
+/* ---- Quote panel (on the photo) ------------------------------------------------------------- */
+.hm-quote {
+  --p-ink: #ffffff;
+  --p-mute: rgba(255, 255, 255, 0.72);
+  --p-line: rgba(255, 255, 255, 0.2);
+  --p-field: rgba(255, 255, 255, 0.1);
+  padding: 20px;
+  scroll-margin-top: 100px;
+  color: var(--p-ink);
+}
+.hm-glass {
+  background: rgba(16, 20, 28, 0.54);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  backdrop-filter: blur(28px) saturate(170%);
+  border: 1px solid var(--p-line);
+  border-radius: var(--radius-card);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14);
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hm-glass {
+    background: rgba(16, 20, 28, 0.85);
+  }
+}
+.hm-quote .hm-btn-quiet {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+  border-color: var(--p-line);
+}
+.hm-seg {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  padding: 4px;
+  border-radius: var(--radius);
+  background: var(--p-field);
+  margin-bottom: 18px;
+}
+.hm-seg button {
+  min-height: 40px;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--p-mute);
+  font: 500 14px var(--font);
+  cursor: pointer;
+  border: 0;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+.hm-seg button.is-on {
+  background: #fff;
+  color: #212121;
+  font-weight: 700;
+}
+.hm-trip {
+  display: flex;
+  gap: 18px;
+  margin-bottom: 4px;
+}
+.hm-trip button {
+  background: none;
+  border: 0;
+  padding: 4px 0;
+  color: var(--p-mute);
+  font: 500 14px var(--font);
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+}
+.hm-trip button.is-on {
+  color: #fff;
+  border-color: #fff;
+}
+.hm-form {
+  display: grid;
+  gap: 14px;
+}
+.hm-row {
+  display: grid;
+  gap: 12px;
+}
+.hm-row-2 {
+  grid-template-columns: 1fr 1fr;
+}
+.hm-row-3 {
+  grid-template-columns: 1.25fr 1.25fr 0.8fr;
+}
+.hm-row-3 input[type="date"] {
+  padding: 11px 8px 11px 10px;
+  font-size: 14px;
+}
+.hm-field {
+  position: relative;
+  min-width: 0;
+}
+.hm-field label {
+  display: block;
+  color: var(--p-mute);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.hm-field input,
+.hm-field select,
+.hm-field textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 11px 14px;
+  border-radius: var(--radius);
+  border: 1px solid var(--p-line);
+  background: var(--p-field);
+  color: #fff;
+  font: 400 16px var(--font);
+  color-scheme: dark;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.hm-field textarea {
+  resize: vertical;
+}
+.hm-field input::placeholder,
+.hm-field textarea::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+.hm-field input:focus,
+.hm-field select:focus,
+.hm-field textarea:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.16);
+}
+.hm-field select option {
+  background: #11161f;
+  color: #fff;
+}
+.hm-field [aria-invalid="true"] {
+  border-color: #ff8a92;
+}
+.hm-error,
+.hm-failure {
+  color: #ffb3b8;
+  font-size: 14px;
+  margin-top: 6px;
+}
+.hm-fine {
+  color: var(--p-mute);
+  font-size: 14px;
+  text-align: left;
+}
+/* The call to action sits to the left, at its own width, like the reference. */
+.hm-form > .hm-btn {
+  justify-self: start;
+}
+.hm-back {
+  justify-self: start;
+  background: none;
+  border: 0;
+  color: var(--p-mute);
+  font: 500 14px var(--font);
+  cursor: pointer;
+  padding: 0;
+}
+.hm-back:hover {
+  color: #fff;
+}
+.hm-summary {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.hm-check {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: 10px;
+  align-items: start;
+  color: var(--p-mute);
+  font-size: 14px;
+  line-height: 1.45;
+}
+.hm-check input {
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  accent-color: var(--red);
+}
+.hm-check a {
+  color: inherit;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hm-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.hm-done h2 {
+  font-size: 32px;
+  margin-bottom: 14px;
+}
+.hm-done p {
+  color: var(--p-mute);
+  line-height: 1.55;
+}
+.hm-done strong {
+  color: #fff;
+  font-weight: 700;
+}
+.hm-done .hm-actions {
+  margin-top: 22px;
+}
+.hm-done:focus {
+  outline: none;
+}
+.hm-eyebrow {
+  color: var(--p-mute);
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 14px;
+}
+
+/* Airport list */
+.hm-listbox {
+  position: absolute;
+  z-index: 30;
+  left: 0;
+  top: calc(100% + 6px);
+  /* Wider than its half-width field, so a name and its airport read on one line each. A list that would run off the
+     panel on a narrow screen settles for the width of the field. */
+  min-width: min(21rem, calc(100vw - 7rem));
+  max-height: 300px;
+  overflow: auto;
+  padding: 6px;
+  list-style: none;
+  border-radius: 14px;
+  /* Solid, so the labels of the fields behind it never show through. */
+  background: #161b24;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: 0 28px 60px -14px rgba(0, 0, 0, 0.75);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.25) transparent;
+}
+/* The second of a pair of fields opens to the left, so the list stays inside the panel. */
+.hm-row .hm-combo:nth-child(2) .hm-listbox {
+  left: auto;
+  right: 0;
+}
+.hm-listbox li {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 9px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  color: #fff;
+}
+.hm-listbox li.is-active,
+.hm-listbox li:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.hm-air {
+  min-width: 0;
+}
+.hm-air b {
+  display: block;
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+.hm-listbox small {
+  display: block;
+  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 13px;
+  line-height: 1.3;
+}
+.hm-air b,
+.hm-listbox small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hm-code {
+  display: grid;
+  place-items: center;
+  padding: 6px 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+/* ---- Sections and titles -------------------------------------------------------------------- */
+.hm-sec {
+  padding: var(--section-y) 0;
+}
+.hm-sec-tight {
+  padding-top: 0;
+}
+.hm-sec-grey {
+  background: var(--canvas-2);
+  padding: var(--section-y-lg) 0;
+}
+.hm-wrap {
+  max-width: calc(var(--container) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+/* Section headings: light and large, tracked in tight, always two lines (the break is set in the markup). */
+.hm .hm-title,
+.hm .hm-deals-copy h2 {
+  font-size: clamp(30px, 5.2vw, 60px);
+  font-weight: 500;
+  letter-spacing: -0.05em;
+  line-height: 1.1;
+}
+.hm-title {
+  position: relative;
+  margin: 0 auto 48px;
+  text-align: center;
+}
+.hm-title-left {
+  text-align: left;
+  margin: 0;
+}
+/* On the homepage the section headings use the same light grotesque as the hero heading. The small label above each
+   keeps the body font, and inner pages that share these classes are not touched. */
+body:has(.hm-hero) .hm-title,
+body:has(.hm-hero) #hm-deals {
+  font-family: var(--font-hero);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+}
+body:has(.hm-hero) .hm-title .hm-sticker {
+  font-family: var(--font);
+}
+/* The section label: a flat, level, borderless tinted pill on its own line above the heading. */
+.hm-sticker {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 18px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chip) 50%, transparent);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1;
+  white-space: nowrap;
+}
+.hm-title-left .hm-sticker {
+  margin-left: 0;
+}
+.hm-lead {
+  max-width: 54ch;
+  margin: -16px auto 0;
+  text-align: center;
+  color: var(--ink-2);
+  font-size: clamp(18px, 2vw, 24px);
+  line-height: 1.42;
+}
+.hm-row-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+.hm-row-head .hm-title {
+  margin: 0;
+}
+.hm-chip {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  padding: 7px 11px;
+  border-radius: var(--radius-card);
+  background: var(--chip);
+  color: var(--chip-ink);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Story collage */
+.hm-collage {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 72px 0 24px;
+}
+.hm .hm-collage li {
+  width: min(24%, 300px);
+  margin-left: -2%;
+  /* --p is 0 while the photos are stacked in the middle and 1 once they have split open. Each photo slides
+     out from the centre by its own place in the row (--k) and tilts to its angle (--r). */
+  transform: translateX(calc(var(--k, 0) * (1 - var(--p, 1)) * -96%)) rotate(calc(var(--r, 0deg) * var(--p, 1)));
+  will-change: transform;
+}
+.hm-collage li:first-child {
+  margin-left: 0;
+}
+.hm-collage figure {
+  margin: 0;
+}
+.hm-collage img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-float);
+}
+.hm-collage li:nth-child(2) img {
+  aspect-ratio: 4 / 5;
+}
+.hm-collage figcaption {
+  margin-top: 12px;
+  color: var(--ink-2);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Six reasons */
+.hm-cells-frame {
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+}
+.hm-cells {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* The cells draw their own right and bottom lines; the frame clips the outer ones. */
+  margin: 0 -1px -1px 0;
+}
+.hm-cells li {
+  box-shadow: inset -1px -1px 0 var(--hairline);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 250px;
+}
+.hm-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: auto;
+  flex: none;
+}
+.hm-cells h3 {
+  font-size: 20px;
+  line-height: 1.2;
+  margin-top: 28px;
+}
+.hm-cells p {
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.hm-partners {
+  margin-top: 20px;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+
+/* Routes */
+.hm-routes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 420px;
+  gap: 16px;
+}
+.hm-routes li {
+  position: relative;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--canvas-2);
+}
+.hm-routes li.is-wide {
+  grid-column: span 2;
+}
+.hm-routes button {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  border: 0;
+  padding: 0;
+  background: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  font-family: var(--font);
+}
+.hm-routes img,
+.hm-pkgs img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s var(--ease);
+}
+.hm-routes button:hover img,
+.hm-pkgs a:hover img {
+  transform: scale(1.03);
+}
+.hm-routes li::after,
+.hm-pkgs li::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 45%, rgba(0, 0, 0, 0.72) 100%);
+  pointer-events: none;
+}
+.hm-routes-text,
+.hm-pkg-text {
+  position: absolute;
+  z-index: 1;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  display: grid;
+  gap: 6px;
+  pointer-events: none;
+}
+.hm-routes-text strong,
+.hm-pkg-text strong {
+  font-family: var(--font-hero);
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.hm-routes-text span,
+.hm-pkg-text span {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.85);
+}
+.hm-chip {
+  z-index: 1;
+}
+/* The arrow in the top corner of a photo card says it opens something; it fills red on hover and focus. */
+.hm-go {
+  position: absolute;
+  z-index: 1;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #212121;
+  transition:
+    background-color 0.25s var(--ease),
+    color 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+.hm-go svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hm-pkgs a:hover .hm-go,
+.hm-pkgs a:focus-visible .hm-go,
+.hm-routes button:hover .hm-go,
+.hm-routes button:focus-visible .hm-go {
+  background: var(--red);
+  color: #fff;
+  transform: rotate(45deg);
+}
+
+/* An inverted band takes the opposite surface to the page */
+.hm-band {
+  background: var(--canvas);
+  color: var(--ink);
+  padding: var(--section-y) 0;
+}
+
+/* Marquee */
+.hm-marquee {
+  overflow: hidden;
+  padding: 40px 0;
+}
+.hm-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: hm-marquee 40s linear infinite;
+}
+.hm-marquee:hover .hm-marquee-track {
+  animation-play-state: paused;
+}
+.hm-marquee ul {
+  display: flex;
+  flex: none;
+  gap: 100px;
+  padding-right: 100px;
+}
+.hm-marquee li {
+  font-family: var(--font-hero);
+  font-size: clamp(64px, 11vw, 120px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.hm-marquee li.is-outline {
+  color: transparent;
+  -webkit-text-stroke: 2px var(--ink);
+}
+@keyframes hm-marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* How it works */
+.hm-how {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: center;
+}
+/* The photo keeps its own 4:5 shape, so nothing is cropped: the whole person is in frame. */
+.hm-how-photo {
+  position: relative;
+  width: min(100%, 520px);
+  justify-self: start;
+}
+.hm-how-photo {
+  aspect-ratio: 4 / 5;
+}
+/* The photos stack and cross-fade: the one for the hovered row is the only one shown. */
+.hm-how-photo img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 0;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+  opacity: 0;
+  transform: scale(1.04);
+  will-change: opacity;
+  transition:
+    opacity 0.6s var(--ease),
+    transform 1s var(--ease);
+}
+.hm-how-photo img.is-on {
+  opacity: 1;
+  transform: none;
+}
+.hm-why-list {
+  position: relative;
+  border-top: 1px solid var(--hairline);
+}
+/* The one highlight: it slides to the hovered row and fades out when the pointer leaves the list. It is the same
+   soft fill the FAQ uses on hover, and the row's text keeps its colour. */
+.hm-why-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  border-radius: var(--radius-card);
+  background: color-mix(in srgb, var(--chip) 55%, transparent);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.5s var(--ease),
+    height 0.5s var(--ease),
+    opacity 0.3s var(--ease);
+}
+.hm-why-list.is-engaged .hm-why-bar {
+  opacity: 1;
+}
+.hm-why-list li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) 20px;
+  align-items: start;
+  gap: 8px;
+  padding: 22px 14px;
+  border-bottom: 1px solid var(--hairline);
+  cursor: default;
+  outline: none;
+  transition: color 0.4s var(--ease);
+}
+.hm-why-num {
+  padding-top: 8px;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  transition: transform 0.5s var(--ease);
+}
+.hm-why-list li.is-on .hm-why-num {
+  transform: translateX(10px);
+}
+.hm-why-body h3 {
+  font-family: var(--font-hero);
+  font-size: clamp(22px, 2.2vw, 30px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+.hm-why-body p {
+  max-width: 46ch;
+  margin-top: 8px;
+  color: var(--ink-2);
+  line-height: 1.5;
+  transition: color 0.4s var(--ease);
+}
+.hm-why-list li.is-on .hm-why-body p {
+  color: var(--ink);
+}
+.hm-why-cta {
+  align-self: flex-start;
+  margin-top: 28px;
+}
+.hm-why-arrow {
+  width: 18px;
+  height: 18px;
+  margin-top: 8px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform 0.5s var(--ease);
+}
+.hm-why-list li.is-on .hm-why-arrow {
+  transform: translate(3px, -3px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-how-photo img,
+  .hm-why-list li,
+  .hm-why-num,
+  .hm-why-arrow,
+  .hm-why-bar,
+  .hm-why-body p {
+    transition: none;
+  }
+}
+.hm-badge {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: var(--red);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: capitalize;
+  text-align: center;
+  line-height: 1.1;
+  transition: transform 0.3s var(--ease);
+}
+.hm-badge:hover {
+  transform: rotate(-8deg) scale(1.04);
+}
+.hm-badge i {
+  font-style: normal;
+  font-size: 20px;
+}
+.hm-steps li {
+  display: flex;
+  gap: 20px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--hairline);
+}
+.hm-steps li:first-child {
+  padding-top: 0;
+}
+.hm-steps li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.hm-steps .hm-icon {
+  margin: 0;
+}
+.hm-steps h3 {
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.hm-steps p {
+  color: var(--ink-2);
+  line-height: 1.6;
+}
+
+/* Packages */
+.hm-pkgs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.hm-pkgs li {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--canvas);
+}
+.hm-pkgs a {
+  position: absolute;
+  inset: 0;
+  color: #fff;
+}
+
+/* Elite Jets: each tier is one card, the tier name and call to action on the left and a large photo set into
+   the right. The cards stack: each stays pinned under the header while the next slides up over it. A card is
+   opaque, so the one beneath is fully covered except for the edge left showing. */
+.hm-stack li {
+  position: sticky;
+  top: calc(var(--header-h) + 20px + var(--i, 0) * 18px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+  gap: 12px;
+  height: clamp(440px, 40vw, 540px);
+  margin-bottom: 24px;
+  padding: 12px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.hm-stack li:last-child {
+  margin-bottom: 0;
+}
+.hm-stack-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: clamp(20px, 2.6vw, 36px);
+}
+.hm-stack-info h3 {
+  max-width: 12ch;
+  font-family: var(--font-hero);
+  font-size: clamp(28px, 3.2vw, 44px);
+  font-weight: 300;
+  line-height: 1.08;
+  letter-spacing: -0.04em;
+}
+.hm-stack-copy p {
+  max-width: 34ch;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.5;
+}
+.hm-stack-copy .hm-btn {
+  margin-top: 32px;
+}
+.hm-stack-photo {
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--chip);
+}
+.hm-stack-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 860px) {
+  .hm-stack li {
+    grid-template-columns: 1fr;
+    grid-template-rows: 200px auto;
+    height: auto;
+    top: calc(var(--header-h) + 12px + var(--i, 0) * 14px);
+  }
+  .hm-stack-photo {
+    min-height: 0;
+  }
+  .hm-stack-photo {
+    order: -1;
+  }
+  .hm-stack-info {
+    gap: 20px;
+    padding: 16px 12px 12px;
+  }
+  .hm-stack-copy .hm-btn {
+    margin-top: 24px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-stack li {
+    position: relative;
+    top: auto;
+  }
+}
+
+.hm-blog li {
+  aspect-ratio: 1 / 1.07;
+}
+.hm-blog li::after {
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.82) 100%);
+}
+.hm-blog .hm-pkg-text strong {
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.15;
+}
+.hm-jets-side {
+  display: grid;
+  justify-items: end;
+  gap: 16px;
+  max-width: 460px;
+}
+.hm-jets-side p {
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.5;
+}
+
+/* Reviews */
+.hm-sample {
+  margin-top: 20px;
+  color: var(--ink-2);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* Deals */
+.hm-deals {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: stretch;
+  padding: clamp(32px, 5vw, 64px);
+  border-radius: var(--radius-card);
+  background: #0d1420;
+  color: var(--ink);
+  overflow: hidden;
+}
+/* The closing call to action run edge to edge: the section carries the dark colour and the card inside drops its own. */
+.hm-deals-bleed {
+  background: #0d1420;
+  padding: var(--section-y-lg) 0;
+}
+.hm-deals-bleed .hm-deals {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  overflow: visible;
+}
+.hm-deals-copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.hm-deals-copy h2 {
+  margin-bottom: 18px;
+}
+/* The second line of the heading sits back a step, as on the reference sites. */
+.hm-dim {
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
+}
+/* The button is anchored to the foot of the card, level with the bottom of the photos, and is a size up. */
+.hm-deals-copy .hm-actions {
+  margin-top: auto;
+}
+.hm-deals-copy .hm-btn:not(:has(i)) {
+  min-height: 56px;
+  padding: 12px 12px 12px 28px;
+  font-size: 15px;
+}
+.hm-deals-copy .hm-btn:not(:has(i))::before {
+  width: 32px;
+  height: 32px;
+}
+.hm-deals-copy h2 .hm-sticker {
+  margin-left: 0;
+}
+.hm-deals-copy > p {
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.55;
+  max-width: 42ch;
+  margin-bottom: 28px;
+}
+.hm-deals-form {
+  display: grid;
+  gap: 14px;
+  max-width: 480px;
+}
+.hm-deals-row {
+  display: flex;
+  gap: 8px;
+  padding: 6px;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-card);
+  background: var(--canvas);
+}
+.hm-deals-row input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: none;
+  padding: 0 10px;
+  color: var(--ink);
+  font: 400 16px var(--font);
+}
+.hm-deals-row input:focus {
+  outline: none;
+}
+.hm-deals-form .hm-check,
+.hm-check-ink {
+  color: var(--ink-2);
+}
+.hm-deals-form .hm-error {
+  color: #c4161f;
+}
+:root[data-theme="dark"] .hm-deals-form .hm-error {
+  color: #ff9ba1;
+}
+@media all {
+  :root:not([data-theme="light"]) .hm-deals-form .hm-error {
+    color: #ff9ba1;
+  }
+}
+.hm-deals-done {
+  font-size: 20px;
+  font-weight: 700;
+}
+/* Three African route photos set flat in a grid: one tall, two stacked, each with its place name. */
+.hm-deals-photos {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  height: 440px;
+}
+.hm-deals-photos li {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--chip);
+}
+.hm-deals-photos li:first-child {
+  grid-row: 1 / 3;
+}
+.hm-deals-photos a {
+  position: absolute;
+  inset: 0;
+  color: #fff;
+}
+.hm-deals-photos img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: hm-drift 16s ease-in-out infinite alternate;
+}
+/* Each photo drifts and zooms slowly, out of step with the others, so the three never move together. */
+.hm-deals-photos li:nth-child(2) img {
+  animation-duration: 20s;
+  animation-delay: -6s;
+  --drift-x: -1.5%;
+}
+.hm-deals-photos li:nth-child(3) img {
+  animation-duration: 18s;
+  animation-delay: -11s;
+  --drift-x: 1.5%;
+}
+@keyframes hm-drift {
+  from {
+    transform: scale(1.02) translate(0, 0);
+  }
+  to {
+    transform: scale(1.12) translate(var(--drift-x, 1.2%), -1.5%);
+  }
+}
+/* The shared chip, with a darker frosted fill so the name reads on the brightest sky as well. */
+.hm-deals-photos .hm-chip {
+  background: rgba(8, 11, 16, 0.4);
+  color: #fff;
+}
+@media (max-width: 640px) {
+  .hm-deals-photos .hm-chip {
+    top: 8px;
+    left: 8px;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  .hm-deals-photos .hm-go {
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+  }
+  .hm-deals-photos .hm-go svg {
+    width: 13px;
+    height: 13px;
+  }
+}
+.hm-deals-photos a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: -3px;
+}
+/* The same hover as the other cards: the card lifts, its photo leans in, its text rises and the badge turns
+   red and a quarter-turn. The individual scale and translate properties are used so the drift keeps running. */
+@media (hover: hover) {
+  .hm-deals-photos li {
+    translate: 0 0;
+    transition:
+      opacity 1.4s var(--ease-soft) calc(var(--i, 0) * 150ms),
+      transform 1.6s var(--ease-glide) calc(var(--i, 0) * 150ms),
+      translate 0.9s var(--ease-glide);
+  }
+  .hm-deals-photos li:hover {
+    translate: 0 -6px;
+  }
+  .hm-deals-photos img {
+    scale: 1;
+    transition: scale 1.4s var(--ease-glide);
+  }
+  .hm-deals-photos li:hover img {
+    scale: 1.06;
+  }
+}
+.hm-deals-photos a:hover .hm-go,
+.hm-deals-photos a:focus-visible .hm-go {
+  background: var(--red);
+  color: #fff;
+  transform: rotate(45deg);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-deals-photos img {
+    animation: none;
+  }
+  .hm-deals-photos li:hover,
+  .hm-deals-photos li:hover img {
+    translate: none;
+    scale: 1;
+  }
+}
+
+/* FAQ */
+/* FAQ: the heading and a way to ask sit in a column that stays in view; the questions run beside it. */
+.hm-faq-wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.hm-faq-side {
+  position: sticky;
+  top: calc(var(--header-h) + 32px);
+}
+.hm-faq-side .hm-title {
+  margin-bottom: 20px;
+}
+.hm-faq-side p {
+  max-width: 30ch;
+  margin-bottom: 28px;
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.5;
+}
+.hm-faq {
+  display: grid;
+  gap: 10px;
+}
+.hm-faq-item {
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+  padding: 0 24px;
+  transition: background-color 0.5s var(--ease-glide);
+}
+.hm-faq-item.is-open,
+.hm-faq-item:hover {
+  background: color-mix(in srgb, var(--chip) 55%, transparent);
+}
+.hm-faq-q {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  padding: 20px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: 500 18px/1.35 var(--font);
+  letter-spacing: -0.01em;
+  text-align: left;
+  cursor: pointer;
+}
+/* The same round badge as the card arrows: a plus that turns into a cross as the answer opens. */
+.hm-faq-q i {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--ink);
+  transition: transform 0.6s var(--ease-glide);
+}
+.hm-faq-q i::before,
+.hm-faq-q i::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 1.5px;
+  margin: -0.75px 0 0 -6px;
+  background: var(--canvas);
+}
+.hm-faq-q i::after {
+  transform: rotate(90deg);
+}
+.hm-faq-item.is-open .hm-faq-q i {
+  transform: rotate(135deg);
+}
+.hm-faq-q:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+/* The answer's row grows from 0 to its own height, so the rows below glide down instead of jumping. */
+.hm-faq-a {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.6s var(--ease-glide);
+}
+.hm-faq-item.is-open .hm-faq-a {
+  grid-template-rows: 1fr;
+}
+.hm-faq-a > div {
+  min-height: 0;
+  overflow: hidden;
+}
+.hm-faq p {
+  max-width: 62ch;
+  padding: 0 48px 24px 0;
+  color: var(--ink-2);
+  line-height: 1.65;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.35s var(--ease-glide),
+    transform 0.6s var(--ease-glide);
+}
+.hm-faq-item.is-open p {
+  opacity: 1;
+  transform: none;
+  transition-delay: 0.12s, 0s;
+}
+@media (max-width: 900px) {
+  .hm-faq-wrap {
+    grid-template-columns: 1fr;
+  }
+  .hm-faq-side {
+    position: static;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .svc {
+    animation: none;
+  }
+  .svc-list.is-stack .svc {
+    position: relative;
+    top: auto;
+  }
+  .hm-faq-item,
+  .hm-faq-q i,
+  .hm-faq-a,
+  .hm-faq p {
+    transition: none;
+  }
+}
+
+/* Closing banner */
+.hm-banner {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  align-items: center;
+  min-height: 460px;
+  padding: clamp(32px, 6vw, 80px);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  color: #fff;
+}
+.hm-banner > img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.hm-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(5, 9, 15, 0.82) 0%, rgba(5, 9, 15, 0.35) 70%, rgba(5, 9, 15, 0.1) 100%);
+}
+.hm-banner-copy h2 {
+  font-size: clamp(36px, 5vw, 64px);
+  line-height: 1.05;
+  max-width: 14ch;
+  margin-bottom: 16px;
+}
+.hm-banner-copy p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 18px;
+  max-width: 40ch;
+  margin-bottom: 28px;
+}
+
+/* Phone bar */
+.hm-bar {
+  display: none;
+}
+
+/* ---- Responsive ----------------------------------------------------------------------------- */
+@media (max-width: 1024px) {
+  .hm-hero-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+    row-gap: 28px;
+    height: auto;
+    min-height: 100svh;
+  }
+  .hm-hero-card .hm-hero-copy,
+  .hm-hero-card .hm-quote,
+  .hm-hero-card .hm-slider {
+    grid-column: 1;
+    grid-row: auto;
+  }
+  .hm-hero-card .hm-hero-copy {
+    padding-top: 24px;
+    align-self: start;
+  }
+  .hm-hero h1 {
+    max-width: 16ch;
+    font-size: clamp(40px, 9vw, 96px);
+  }
+  .hm-routes {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .hm-routes li.is-wide {
+    grid-column: span 2;
+  }
+  .hm-how,
+  .hm-deals {
+    grid-template-columns: 1fr;
+  }
+  .hm-deals-photos {
+    height: 320px;
+  }
+  .hm-pkgs {
+    grid-template-columns: 1fr 1fr;
+  }
+  .hm-cells {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 640px) {
+  .hm-hero-card {
+    min-height: 0;
+    padding-top: calc(var(--header-h) + 20px);
+  }
+  .hm-slider {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .hm-slider-thumbs button {
+    width: 88px;
+  }
+  .hm-slider-line {
+    gap: 18px;
+  }
+
+  .hm-row-3 {
+    grid-template-columns: 1fr 1fr;
+  }
+  .hm-row-3 .hm-field:first-child {
+    grid-column: 1 / -1;
+  }
+  .hm-sticker {
+    margin-left: 0;
+  }
+  .hm-title {
+    text-align: left;
+    margin-left: 0;
+  }
+  .hm-lead {
+    text-align: left;
+    margin-left: 0;
+  }
+  .hm-row-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hm-collage {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 16px;
+    padding: 56px 0 0;
+  }
+  .hm-collage li,
+  .hm-collage li:first-child {
+    width: auto;
+    margin: 0;
+  }
+  .hm-cells {
+    grid-template-columns: 1fr;
+  }
+  .hm-cells li {
+    min-height: 0;
+  }
+  .hm-icon {
+    margin-bottom: 0;
+  }
+  .hm-routes {
+    grid-template-columns: 1fr;
+    grid-auto-rows: 320px;
+  }
+  .hm-routes li.is-wide {
+    grid-column: auto;
+  }
+  .hm-pkgs {
+    grid-template-columns: 1fr;
+  }
+  .hm-faq p {
+    padding-right: 0;
+  }
+  .hm-deals-row {
+    flex-direction: column;
+  }
+  .hm-deals-row input {
+    min-height: 46px;
+  }
+  .hm-bar {
+    position: fixed;
+    z-index: 150;
+    left: 12px;
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 8px;
+    padding: 8px;
+    border-radius: var(--radius);
+    background: var(--header-bg);
+    -webkit-backdrop-filter: blur(24px) saturate(170%);
+    backdrop-filter: blur(24px) saturate(170%);
+    border: 1px solid var(--hairline);
+    box-shadow: var(--shadow-float);
+  }
+  .hm-bar .hm-btn {
+    min-height: 46px;
+  }
+  .hm {
+    padding-bottom: 84px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hm * {
+    transition: none !important;
+  }
+  .hm-marquee-track {
+    animation: none;
+  }
+}
+
+/* Simple holding pages (Blogs, Elite Jets) */
+.hm-page {
+  min-height: 70vh;
+  padding-top: calc(var(--header-h) + 96px);
+  padding-bottom: 96px;
+}
+.hm-page h1 {
+  font-size: clamp(44px, 7vw, 88px);
+  line-height: 1;
+}
+.hm-page p {
+  max-width: 52ch;
+  margin: 24px 0 36px;
+  color: var(--ink-2);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.5;
+}
+
+/* Partner count and logo carousel */
+.hm-logos {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  /* soft edges, so logos slide in and out instead of being cut */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+.hm-logos-track {
+  display: flex;
+  width: max-content;
+  animation: hm-marquee 36s linear infinite;
+}
+.hm-logos:hover .hm-logos-track {
+  animation-play-state: paused;
+}
+.hm-logos ul {
+  display: flex;
+  flex: none;
+  gap: 16px;
+  padding-right: 16px;
+}
+.hm-logos li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 150px;
+  height: 68px;
+  padding: 12px 16px;
+  border-radius: var(--radius-card);
+  /* the logos are drawn for white backgrounds, so they sit on a light tile in both themes */
+  background: #ffffff;
+}
+.hm-logos img {
+  max-width: 100%;
+  max-height: 40px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+@media (max-width: 640px) {
+  .hm-logos {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-logos-track {
+    animation: none;
+  }
+  .hm-logos {
+    overflow-x: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+/* The small line of text under the collage */
+.hm-small {
+  max-width: 46ch;
+  margin: 8px auto 0;
+  text-align: center;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.55;
+}
+@media (max-width: 640px) {
+  .hm-small {
+    text-align: left;
+    margin-left: 0;
+  }
+  .hm .hm-collage li {
+    transform: rotate(var(--r, 0deg));
+  }
+}
+
+/* Why choose us: the rating row */
+.hm-why-side {
+  display: flex;
+  flex-direction: column;
+}
+.hm-google {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  padding-top: 28px;
+  margin-top: 28px;
+  border-top: 1px solid var(--hairline);
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.hm-google b {
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: var(--track);
+}
+.hm-stars {
+  color: #f5b301;
+  letter-spacing: 3px;
+  font-size: 16px;
+}
+
+/* How it works: three hairline step cards */
+
+/* How it works: a full-bleed photo under a dark wash, the step cards sitting on it. The cards are light in both
+   themes, so their colours are set here instead of following the page. */
+.hm-how-bg {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  color: #fff;
+  padding: var(--section-y-lg) 0;
+}
+.hm-how-bg-img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 72%;
+}
+.hm-how-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    180deg,
+    rgba(10, 13, 18, 0.55) 0%,
+    rgba(10, 13, 18, 0.45) 45%,
+    rgba(10, 13, 18, 0.72) 100%
+  );
+}
+.hm-how-bg .hm-title {
+  color: #fff;
+}
+/* The steps: frosted glass over the photo. A large numeral, then the title, then one short paragraph; on desktop a
+   thin line with a chevron runs from each card to the next so they read as a sequence. */
+.hm-steps-glass {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 48px;
+}
+.hm-steps-glass li {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 36px 32px 40px;
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+  backdrop-filter: blur(24px) saturate(150%);
+  color: #fff;
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .hm-steps-glass li {
+    background: rgba(16, 20, 28, 0.7);
+  }
+}
+.hm-step-num {
+  display: block;
+  margin-bottom: 40px;
+  font-family: var(--font-hero);
+  font-size: clamp(52px, 5vw, 72px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.6);
+  font-variant-numeric: tabular-nums;
+}
+.hm-steps-glass h3 {
+  margin-bottom: 14px;
+  font-family: var(--font-hero);
+  font-size: clamp(24px, 2.3vw, 32px);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+.hm-steps-glass p {
+  max-width: 34ch;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 16px;
+  line-height: 1.6;
+}
+@media (min-width: 1025px) {
+  .hm-steps-glass li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    top: calc(36px + clamp(52px, 5vw, 72px) / 2);
+    left: 100%;
+    width: 48px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.5);
+  }
+  .hm-steps-glass li:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    top: calc(36px + clamp(52px, 5vw, 72px) / 2 - 3px);
+    left: calc(100% + 42px);
+    width: 7px;
+    height: 7px;
+    border-top: 1px solid rgba(255, 255, 255, 0.7);
+    border-right: 1px solid rgba(255, 255, 255, 0.7);
+    transform: rotate(45deg);
+  }
+}
+@media (max-width: 1024px) {
+  .hm-steps-glass {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+.hm-how-cta {
+  display: flex;
+  justify-content: center;
+  margin-top: 48px;
+}
+.hm-how-bg .hm-partners {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Reviews on a white section: the flat card, the partner logos sliding into it, then the review cards */
+.hm-sec-white {
+  background: var(--canvas);
+  color: var(--ink);
+  padding: var(--section-y-lg) 0;
+}
+.hm-sec-white.hm-sec-flush {
+  padding-top: 0;
+}
+.hm-proof {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.hm-proof-card {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 270px;
+  padding: 20px 24px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+  box-shadow: 12px 0 24px -6px rgba(0, 0, 0, 0.1);
+}
+.hm-proof-rating {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+.hm-proof-rating b {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: var(--track);
+  line-height: 1;
+}
+.hm-proof-small {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.hm-proof-count {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--hairline);
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.hm-proof-count b {
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 700;
+}
+/* The logos begin underneath the card and fade as they near it, so they vanish into it. */
+.hm-proof .hm-logos {
+  flex: 1;
+  min-width: 0;
+  margin-left: -28px;
+  padding-left: 28px;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 94%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 14%, #000 94%, transparent 100%);
+}
+@media (max-width: 1024px) {
+}
+@media (max-width: 640px) {
+  .hm-proof {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+  .hm-proof-card {
+    box-shadow: none;
+  }
+  .hm-proof .hm-logos {
+    margin-left: 0;
+    padding-left: 0;
+  }
+}
+
+/* The Google rating sits on its own line under the list and photo, centred as one row. */
+.hm-why-proof {
+  display: flex;
+  justify-content: center;
+  margin-top: clamp(40px, 5vw, 72px);
+}
+.hm-why-proof .hm-proof {
+  margin: 0;
+}
+.hm-why-proof .hm-proof-rating b {
+  font-size: 44px;
+}
+.hm-why-proof .hm-proof-card {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 14px 40px;
+  min-width: 0;
+  padding: 40px 48px;
+  box-shadow: none;
+}
+.hm-why-proof .hm-proof-count {
+  margin: 0;
+  padding: 0 0 0 40px;
+  border-top: 0;
+  border-left: 1px solid var(--hairline);
+}
+@media (max-width: 640px) {
+  .hm-why-proof .hm-proof-count {
+    padding: 10px 0 0;
+    border-left: 0;
+    border-top: 1px solid var(--hairline);
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* Reviews: a split heading, then a rating card, a photo with one quote, and one column of cards scrolling up */
+.hm-rv-head p {
+  max-width: 340px;
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.5;
+}
+.hm-rv {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.2fr) minmax(0, 0.85fr);
+  gap: 12px;
+  height: 540px;
+}
+.hm-rv-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.hm-rv-rating {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hm-rv-rating b {
+  font-size: 56px;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+.hm-rv-rating small {
+  margin-left: 2px;
+  color: var(--ink-2);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.hm-rv-rating p {
+  max-width: 14ch;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.4;
+}
+.hm-rv-facts {
+  display: grid;
+  gap: 14px;
+}
+.hm-rv-facts li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 16px;
+  line-height: 1.35;
+}
+.hm-rv-facts .hm-icon {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--ink-2);
+}
+.hm-rv-cta {
+  margin-top: auto;
+}
+.hm-rv-cta p {
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.45;
+}
+.hm-rv-cta b {
+  color: var(--ink);
+  font-weight: 500;
+}
+.hm-rv-btns {
+  display: flex;
+  gap: 8px;
+  margin-top: 18px;
+}
+.hm-rv-go {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--canvas);
+  transition: transform 0.4s var(--ease);
+}
+.hm-rv-go:hover {
+  transform: rotate(45deg);
+}
+.hm-rv-go svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.hm-rv-feature {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+  isolation: isolate;
+}
+.hm-rv-feature img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* The woman sits at the right of the photo, so the crop leans right to keep her in frame. */
+  object-position: 88% 50%;
+}
+.hm-rv-feature::after {
+  content: "";
+  position: absolute;
+  inset: 45% 0 0;
+  z-index: 1;
+  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.72));
+}
+.hm-rv-feature figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 2;
+  padding: 28px;
+  color: #fff;
+}
+.hm-rv-feature blockquote {
+  font-size: 20px;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+.hm-rv-feature cite {
+  display: block;
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 14px;
+  font-style: normal;
+}
+.hm-rv-col {
+  min-width: 0;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 8%, #000 92%, transparent 100%);
+}
+.hm-rv-track {
+  animation: hm-rv-up 70s linear infinite;
+}
+.hm-rv-col:hover .hm-rv-track {
+  animation-play-state: paused;
+}
+.hm-rv-track ul {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+@keyframes hm-rv-up {
+  to {
+    transform: translateY(-50%);
+  }
+}
+.hm-rv-card {
+  padding: 24px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.hm-rv-card .hm-stars {
+  display: block;
+  font-size: 14px;
+  letter-spacing: 3px;
+}
+.hm-rv-card blockquote {
+  margin: 16px 0 20px;
+  font-size: 16px;
+  line-height: 1.5;
+}
+.hm-rv-card footer {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hm-rv-av {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--canvas);
+  font-size: 14px;
+  font-weight: 600;
+}
+.hm-rv-card footer strong,
+.hm-rv-card footer small {
+  display: block;
+}
+.hm-rv-card footer small {
+  margin-top: 2px;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+@media (max-width: 1100px) {
+  .hm-rv {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    height: auto;
+  }
+  .hm-rv-feature {
+    min-height: 460px;
+  }
+  .hm-rv-col {
+    grid-column: 1 / -1;
+    height: 460px;
+  }
+}
+@media (max-width: 640px) {
+  .hm-rv-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .hm-rv {
+    grid-template-columns: 1fr;
+  }
+  .hm-rv-stats {
+    padding: 24px;
+  }
+  .hm-rv-feature {
+    min-height: 420px;
+  }
+  .hm-rv-feature blockquote {
+    font-size: 18px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-rv-col {
+    height: auto;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .hm-rv-track {
+    animation: none;
+    transform: none;
+  }
+  .hm-rv-track ul[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+.hm-deals-call {
+  margin-top: 20px;
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.hm-deals-call a {
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---- Quote and contact pages: a photo panel with contact details beside the form ------------- */
+.hm-qp {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 20px;
+  align-items: stretch;
+  padding-top: calc(var(--header-h) + 40px);
+  padding-bottom: 80px;
+}
+.hm-qp-side {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 48px;
+  min-height: 640px;
+  padding: clamp(24px, 3vw, 36px);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  color: #fff;
+}
+.hm-qp-side > img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 40% 50%;
+}
+.hm-qp-side::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  /* Dark behind the heading at the top and the contact details at the foot, and clear between, so the photo
+     shows. */
+  background: linear-gradient(
+    180deg,
+    rgba(5, 9, 15, 0.62) 0%,
+    rgba(5, 9, 15, 0.12) 38%,
+    rgba(5, 9, 15, 0.12) 55%,
+    rgba(5, 9, 15, 0.66) 100%
+  );
+}
+.hm-qp-copy h1,
+.hm-qp-copy h2 {
+  max-width: 10em;
+  font-size: clamp(32px, 3.4vw, 46px);
+  line-height: 1.05;
+  margin: 0;
+}
+.hm-qp-copy p {
+  max-width: 34ch;
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.85);
+  line-height: 1.5;
+}
+.hm-qp-contacts {
+  display: grid;
+  gap: 10px;
+  list-style: none;
+}
+.hm-qp-contacts li {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-radius: var(--radius-card);
+  background: rgba(255, 255, 255, 0.14);
+}
+.hm-qp-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: #fff;
+  color: #212121;
+  font-size: 16px;
+}
+.hm-qp-contacts li > div {
+  display: grid;
+  min-width: 0;
+}
+.hm-qp-contacts li span:not(.hm-qp-icon) {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 13px;
+}
+.hm-qp-contacts a,
+.hm-qp-contacts strong {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: var(--track);
+  color: #fff;
+}
+.hm-qp-card {
+  padding: clamp(24px, 3vw, 36px);
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.qf-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.qf-field {
+  min-width: 0;
+}
+.qf-wide {
+  grid-column: 1 / -1;
+}
+.qf-field label {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+.qf-field input,
+.qf-field select,
+.qf-field textarea {
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 16px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  background: var(--canvas);
+  color: var(--ink);
+  font: 400 16px var(--font);
+  transition: border-color 0.2s ease;
+}
+.qf-field textarea {
+  resize: vertical;
+}
+.qf-field input::placeholder,
+.qf-field textarea::placeholder {
+  color: var(--ink-2);
+  opacity: 0.7;
+}
+.qf-field input:focus,
+.qf-field select:focus,
+.qf-field textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.qf-field [aria-invalid="true"] {
+  border-color: #c4161f;
+}
+.qf-error {
+  margin-top: 6px;
+  color: #c4161f;
+  font-size: 14px;
+}
+:root[data-theme="dark"] .qf-error,
+:root:not([data-theme="light"]) .qf-error {
+  color: #ff9ba1;
+}
+.qf-trap {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.qf-consent {
+  display: flex;
+  gap: 12px;
+  margin: 24px 0 20px;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.qf-consent input {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 2px;
+  accent-color: var(--ink);
+}
+.qf-consent a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.qf > .hm-btn {
+  margin-top: 4px;
+}
+/* After the request is sent: the card fills the space beside the contact panel, so the result sits in it
+   instead of leaving it empty. */
+.hm-qp-card:has(.qf-done) {
+  display: flex;
+}
+.hm-qp-card:has(.qf-done) > .hm-qp-title,
+.hm-qp-card:has(.qf-done) > .hm-qp-sub {
+  display: none;
+}
+.qf-done {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0;
+  outline: none;
+}
+.qf-done-mark {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  margin-bottom: 20px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--canvas-2);
+}
+.qf-done-mark svg {
+  width: 24px;
+  height: 24px;
+}
+.qf-done h2 {
+  margin: 0 0 10px;
+  font-size: clamp(30px, 3.4vw, 40px);
+}
+.qf-done .qf-done-lead {
+  max-width: 46ch;
+  margin: 0 0 24px;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.5;
+}
+.qf-done .qf-done-lead strong {
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.qf-ref {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+  width: 100%;
+  max-width: 460px;
+  padding: 12px 14px 12px 18px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  background: var(--canvas);
+}
+.qf-ref span {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.qf-ref strong {
+  flex: 1;
+  color: var(--ink);
+  font-size: 18px;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+.qf-ref button {
+  padding: 8px 16px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--canvas-2);
+  color: var(--ink);
+  font: 600 14px var(--font);
+  cursor: pointer;
+}
+.qf-ref button:hover {
+  background: var(--hairline);
+}
+.qf-steps {
+  list-style: none;
+  counter-reset: qfstep;
+  width: 100%;
+  max-width: 460px;
+  margin: 28px 0 0;
+  padding: 0;
+}
+.qf-steps li {
+  counter-increment: qfstep;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.4;
+}
+.qf-steps li:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+.qf-steps li::before {
+  content: counter(qfstep, decimal-leading-zero);
+  color: var(--ink-2);
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.qf-done .qf-done-urgent {
+  max-width: 46ch;
+  margin: 20px 0 0;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.qf-done-urgent a {
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.qf-done-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px 20px;
+  margin-top: 28px;
+}
+.qf-again {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  font: 600 15px var(--font);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+@media (max-width: 640px) {
+  .qf-ref {
+    border-radius: 20px;
+  }
+  .qf-ref span {
+    flex-basis: 100%;
+  }
+  .qf-ref strong {
+    white-space: nowrap;
+  }
+}
+
+/* The request could not be sent. */
+.qf-alert {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin: 8px 0 4px;
+  padding: 16px 18px;
+  border: 1px solid rgba(196, 22, 31, 0.35);
+  border-radius: var(--radius-card);
+  background: rgba(196, 22, 31, 0.07);
+  color: var(--ink);
+}
+.qf-alert svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  color: #c4161f;
+}
+.qf-alert strong {
+  display: block;
+  margin-bottom: 2px;
+  font-size: 16px;
+}
+.qf-alert p {
+  margin: 0;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.qf-alert a {
+  color: var(--ink);
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+:root[data-theme="dark"] .qf-alert,
+:root:not([data-theme="light"]) .qf-alert {
+  border-color: rgba(255, 155, 161, 0.4);
+  background: rgba(255, 155, 161, 0.1);
+}
+:root[data-theme="dark"] .qf-alert svg,
+:root:not([data-theme="light"]) .qf-alert svg {
+  color: #ff9ba1;
+}
+@media (max-width: 1024px) {
+  .hm-qp {
+    grid-template-columns: 1fr;
+  }
+  .hm-qp-side {
+    min-height: 0;
+  }
+}
+@media (max-width: 640px) {
+  .qf-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- Contact page: the enquiry form takes the home page's colours ----------------------------- */
+.hm-ct .hm-qp-card {
+  --surface: var(--canvas);
+  --body: var(--ink);
+  --muted: var(--ink-2);
+  --line: var(--hairline);
+  --line-strong: transparent;
+  --error: #c4161f;
+  --error-bg: rgba(196, 22, 31, 0.1);
+  --red-deep: var(--red-hover);
+}
+:root[data-theme="dark"] .hm-ct .hm-qp-card,
+:root:not([data-theme="light"]) .hm-ct .hm-qp-card {
+  --error: #ff9ba1;
+  --error-bg: rgba(255, 155, 161, 0.12);
+}
+.hm-qp-title {
+  font-size: 28px;
+  line-height: 1.15;
+}
+.hm-qp-sub {
+  margin: 8px 0 28px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.hm-ct .ct-form {
+  gap: 20px;
+}
+.hm-ct .ct-field > label,
+.hm-ct .ct-field > .ct-label {
+  color: var(--ink-2);
+  font-weight: 500;
+}
+.hm-ct .ct-field input,
+.hm-ct .ct-field select,
+.hm-ct .ct-field textarea {
+  min-height: 52px;
+  padding: 13px 16px;
+  border-radius: var(--radius);
+  font: 400 16px var(--font);
+}
+.hm-ct .ct-field .dd-btn {
+  min-height: 52px;
+  padding: 13px 16px;
+  border-radius: var(--radius);
+}
+/* The site's date field is drawn for the dark quote panel; here it takes the look of the form's other fields. */
+.hm-ct .ct-field .dp-btn {
+  min-height: 52px;
+  padding: 13px 16px;
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+  font: 400 16px var(--font);
+}
+.hm-ct .ct-field .dp-btn:focus-visible,
+.hm-ct .ct-field .dp-btn[aria-expanded="true"] {
+  border-color: var(--ink);
+  background: var(--surface);
+}
+.hm-ct .ct-field .dp-btn[aria-invalid="true"] {
+  border-color: var(--error);
+}
+.hm-ct .ct-field .dp-placeholder {
+  color: var(--ink-2);
+}
+.hm-ct .ct-field .dp-btn svg {
+  stroke: var(--ink-2);
+}
+.hm-ct .ct-field textarea {
+  min-height: 132px;
+}
+.hm-ct .ct-field input:focus,
+.hm-ct .ct-field select:focus,
+.hm-ct .ct-field textarea:focus {
+  outline: none;
+  border-color: var(--ink);
+}
+.hm-ct .ct-button {
+  min-height: 46px;
+  border-radius: var(--radius);
+  border-color: var(--ink);
+  background: var(--ink);
+  color: var(--canvas);
+  font: 700 14px/1 var(--font);
+}
+.hm-ct .ct-button:hover {
+  border-color: var(--ink-2);
+  background: var(--ink-2);
+  color: var(--canvas);
+}
+.hm-ct .ct-button:disabled {
+  opacity: 0.5;
+}
+.hm-ct .ct-button-plain {
+  border-color: var(--hairline);
+  background: transparent;
+  color: var(--ink);
+}
+.hm-ct .ct-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.hm-ct .ct-consent input {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  min-height: 0;
+  padding: 0;
+  margin-top: 2px;
+  accent-color: var(--ink);
+}
+.hm-ct .ct-consent a {
+  color: var(--ink);
+}
+.hm-ct .ct-reference {
+  border-color: var(--hairline);
+}
+/* Contact layout: the form wide on the left, one contact panel on the right, then the offices and department emails. */
+.hm-ct-top {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.hm-ct-panel {
+  position: sticky;
+  top: calc(var(--header-h) + 24px);
+  padding: clamp(24px, 3vw, 36px);
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.hm-ct-panel h2 {
+  font-size: 28px;
+  line-height: 1.15;
+}
+.hm-ct-panel > p {
+  margin: 8px 0 24px;
+  color: var(--ink-2);
+  line-height: 1.5;
+}
+.hm-ct-panel h3 {
+  margin: 28px 0 14px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hairline);
+  font-size: 20px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+}
+.hm-ct-ways {
+  display: grid;
+  gap: 18px;
+  list-style: none;
+}
+.hm-ct-ways li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.hm-ct-icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--canvas);
+  font-size: 15px;
+}
+.hm-ct-ways li > div {
+  display: grid;
+  min-width: 0;
+}
+.hm-ct-ways li span:not(.hm-ct-icon) {
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.hm-ct-ways a {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: var(--track);
+  overflow-wrap: anywhere;
+}
+.hm-ct-hours {
+  display: grid;
+  gap: 14px;
+}
+.hm-ct-hours dt {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.hm-ct-hours dd {
+  margin: 2px 0 0;
+  line-height: 1.5;
+}
+.hm-ct-heading {
+  margin-bottom: 24px;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.1;
+}
+.hm-ct-offices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.hm-ct-offices article {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: clamp(24px, 3vw, 36px);
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.hm-ct-offices h3 {
+  font-size: 28px;
+  line-height: 1.1;
+}
+.hm-ct-offices address {
+  max-width: 40ch;
+  color: var(--ink-2);
+  font-style: normal;
+  line-height: 1.6;
+}
+.hm-ct-offices a {
+  margin-top: auto;
+  padding-top: 8px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+.hm-ct-depts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+  list-style: none;
+}
+.hm-ct-depts li {
+  display: grid;
+  gap: 2px;
+}
+.hm-ct-depts span {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.hm-ct-depts a {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1024px) {
+  .hm-ct-top {
+    grid-template-columns: 1fr;
+  }
+  .hm-ct-panel {
+    position: static;
+  }
+}
+@media (max-width: 700px) {
+  .hm-ct-offices,
+  .hm-ct-depts {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* A short full-width photo hero for inner pages: it runs up behind the header. */
+.hm-qsec {
+  padding-top: clamp(32px, 4vw, 56px);
+}
+.hm-qsec .hm-qp {
+  padding-block: 0;
+}
+
+/* ---- Card hover: a slow zoom, the card rising a little and its text following ----------------- */
+@media (hover: hover) {
+  .hm .hm-routes li,
+  .hm .hm-pkgs li,
+  .hm .hm-process li,
+  .hm .hm-rv-card {
+    translate: 0 0;
+  }
+  .hm .hm-routes li:hover,
+  .hm .hm-pkgs li:hover {
+    translate: 0 -6px;
+  }
+  .hm .hm-routes li,
+  .hm .hm-pkgs li {
+    transition:
+      opacity 1.4s var(--ease-soft) calc(var(--i, 0) * 150ms),
+      transform 1.6s var(--ease-glide) calc(var(--i, 0) * 150ms),
+      translate 0.9s var(--ease-glide);
+  }
+  .hm .hm-routes li img,
+  .hm .hm-pkgs li img {
+    transition:
+      scale 2s var(--ease-glide) calc(var(--i, 0) * 150ms),
+      transform 1.4s var(--ease-glide);
+  }
+  .hm-routes button:hover img,
+  .hm-pkgs a:hover img {
+    transform: scale(1.06);
+  }
+  .hm .hm-routes-text,
+  .hm .hm-pkg-text {
+    transition: translate 0.9s var(--ease-glide);
+  }
+  .hm .hm-routes li:hover .hm-routes-text,
+  .hm .hm-pkgs li:hover .hm-pkg-text {
+    translate: 0 -6px;
+  }
+  .hm .hm-process li:hover,
+  .hm .hm-rv-card:hover {
+    translate: 0 -4px;
+    background: var(--chip);
+  }
+  .hm .hm-process li,
+  .hm .hm-rv-card {
+    transition:
+      opacity 1.4s var(--ease-soft) calc(var(--i, 0) * 150ms),
+      transform 1.6s var(--ease-glide) calc(var(--i, 0) * 150ms),
+      translate 0.8s var(--ease-glide),
+      background-color 0.8s var(--ease-soft);
+  }
+}
+/* Buttons press in a touch when clicked. */
+.hm-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hm-routes li:hover,
+  .hm-pkgs li:hover,
+  .hm-process li:hover,
+  .hm-rv-card:hover,
+  .hm-routes li:hover .hm-routes-text,
+  .hm-pkgs li:hover .hm-pkg-text {
+    translate: none;
+  }
+}
+
+/* The list pages' stylesheet zeroes the margins of headings, paragraphs and lists inside .pkgs-page and loads after
+   this one, so the card text rules below are written one level up to keep their spacing. */
+/* ---- Elite jets page: the tiers as a grid of equal cards, so any number of tiers fits -------- */
+.el-tiers {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr));
+  gap: 24px;
+  margin-top: clamp(32px, 4vw, 56px);
+  list-style: none;
+}
+.el-tier {
+  display: flex;
+  flex-direction: column;
+  border-radius: var(--radius-card);
+  /* On the list pages the surface is a grey page with white cards, as on the other service pages. */
+  background: var(--surface, var(--canvas-2));
+  box-shadow: 0 1px 2px rgba(11, 23, 38, 0.04);
+  transition: box-shadow 0.3s var(--ease-glide);
+  overflow: hidden;
+  scroll-margin-top: calc(var(--header-h) + 24px);
+}
+@media (hover: hover) {
+  .el-tier:hover {
+    box-shadow: 0 12px 32px rgba(11, 23, 38, 0.1);
+  }
+}
+.el-tier-photo {
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+.el-tier-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.9s var(--ease-glide);
+}
+@media (hover: hover) {
+  .el-tier:hover .el-tier-photo img {
+    transform: scale(1.04);
+  }
+}
+.el-tier-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: clamp(26px, 2.8vw, 36px);
+}
+.el-tiers .el-tier-no {
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+}
+.el-tiers .el-tier-body h3 {
+  margin: 8px 0 10px;
+  font-size: clamp(28px, 2.6vw, 38px);
+  line-height: 1.05;
+}
+.el-tiers .el-tier-tag {
+  font-size: 18px;
+  line-height: 1.4;
+}
+.el-tiers .el-tier-aud {
+  margin-top: 14px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.55;
+}
+.el-tiers .el-tier-inc {
+  margin: 36px 0 18px;
+  padding-top: 28px;
+  border-top: 1px solid var(--hairline);
+  font-size: 15px;
+  font-weight: 700;
+}
+.el-tiers .el-tier-body ul {
+  display: grid;
+  flex: 1;
+  align-content: start;
+  gap: 12px;
+  margin-bottom: 36px;
+  list-style: none;
+}
+.el-tier-body ul li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.el-tier-body ul li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.5em;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: var(--red);
+}
+.el-tier-body .hm-btn {
+  align-self: flex-start;
+}
+.el-end {
+  margin-top: 40px;
+}
+
+/* Numbered pages for lists that are already on the page (services, travel partners). The same look as the listing pager. */
+.hm-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  margin-top: 32px;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.hm-pager ul {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  list-style: none;
+}
+.hm-pager button {
+  display: grid;
+  place-items: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: none;
+  color: var(--ink);
+  font: 500 14px var(--font);
+  cursor: pointer;
+  transition: background-color 0.2s var(--ease);
+}
+.hm-pager button:hover:not(:disabled) {
+  background: var(--canvas-2);
+}
+.hm-pager button[aria-current="page"] {
+  background: var(--ink);
+  color: var(--canvas);
+}
+.hm-pager button:disabled {
+  color: var(--ink-2);
+  opacity: 0.5;
+  cursor: default;
+}
+.hm-pager button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.hm-pager-gap {
+  padding: 0 4px;
+}
+
+/* Partner logos, a quiet strip of their own straight after the hero */
+.hm-logos-band {
+  padding: clamp(32px, 4vw, 56px) 0 0;
+}
+.hm-logos-band .hm-logos {
+  flex: none;
+  width: 100%;
+  /* fade to the page, not to grey */
+  -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+  mask-image: linear-gradient(90deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+}
+.hm-logos-band .hm-logos-track {
+  animation-direction: reverse;
+  animation-duration: 60s;
+}
+.hm-logos-band .hm-logos ul {
+  gap: 20px;
+  padding-right: 20px;
+}
+.hm-logos-band .hm-logos li {
+  width: 168px;
+  height: 64px;
+  padding: 0 24px;
+  border-radius: var(--radius-card);
+  background: #fff;
+}
+.hm-logos-band .hm-logos img {
+  height: 28px;
+  max-height: none;
+  width: auto;
+  max-width: 100%;
+}
+.hm-logos-band .hm-logos img[src*="ivisa"],
+.hm-logos-band .hm-logos img[src*="getyourguide"] {
+  height: 40px;
+  border-radius: 6px;
+}
+.hm-logos-band .hm-logos img[src*="viator"] {
+  height: 38px;
+}
+
+/* ---- Services page: one card per service, text on one side and a photo on the other ----------------- */
+.svc-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 32px;
+}
+@media (max-width: 860px) {
+  .svc-tabs {
+    flex-wrap: nowrap;
+    padding-bottom: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}
+.svc-tabs::-webkit-scrollbar {
+  display: none;
+}
+.svc-tabs button {
+  flex: none;
+  padding: 9px 13px;
+  border: 0;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chip) 50%, transparent);
+  color: var(--ink);
+  font: 500 14px/1.2 var(--font);
+  cursor: pointer;
+  transition:
+    background-color 0.5s var(--ease-soft),
+    color 0.5s var(--ease-soft);
+}
+.svc-tabs button:hover {
+  background: var(--chip);
+}
+.svc-tabs button[aria-selected="true"] {
+  background: var(--ink);
+  color: var(--canvas);
+}
+.svc-tabs button:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.svc-list {
+  display: grid;
+  gap: 24px;
+}
+@keyframes svc-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+.svc {
+  animation: svc-in 0.7s var(--ease-glide) both;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+  height: clamp(440px, 38vw, 520px);
+  scroll-margin-top: calc(var(--header-h) + 24px);
+}
+/* Every other card puts the photo first, so the page keeps a rhythm. */
+.svc:nth-child(even) {
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+.svc:nth-child(even) .svc-photo {
+  order: -1;
+}
+/* The full list stacks: each card stays pinned under the header while the next slides up over it. The cards are
+   opaque, so the one beneath is covered except for the edge left showing. */
+@media (min-width: 861px) {
+  .svc-list.is-stack .svc {
+    position: sticky;
+    top: calc(var(--header-h) + 20px + var(--i, 0) * 18px);
+  }
+}
+.svc-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(20px, 2.6vw, 36px);
+}
+.hm .svc-info h2 {
+  font-size: clamp(26px, 2.9vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+.svc-info > p {
+  max-width: 46ch;
+  margin-top: 18px;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.svc-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 24px;
+  margin: 24px 0 32px;
+}
+.svc-checks li {
+  display: flex;
+  gap: 10px;
+  font-size: 15px;
+  line-height: 1.4;
+}
+.svc-checks li::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  background: var(--ink);
+  -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m5 12.5 4.5 4.5L19 7.5'/></svg>")
+    center / contain no-repeat;
+  mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='m5 12.5 4.5 4.5L19 7.5'/></svg>")
+    center / contain no-repeat;
+}
+.svc-info .hm-btn {
+  margin-top: auto;
+}
+.svc-photo {
+  position: relative;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--chip);
+}
+.svc-photo img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+@media (max-width: 860px) {
+  .svc,
+  .svc:nth-child(even) {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    height: auto;
+  }
+  .svc-photo {
+    order: -1;
+    aspect-ratio: 4 / 3;
+  }
+  .svc-info {
+    padding: 20px 12px 12px;
+  }
+}
+@media (max-width: 520px) {
+  .svc-checks {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---- About page ------------------------------------------------------------------------------- */
+.ab-split {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.ab-side {
+  position: sticky;
+  top: calc(var(--header-h) + 32px);
+}
+.ab-body p {
+  max-width: 62ch;
+  color: var(--ink-2);
+  font-size: 18px;
+  line-height: 1.6;
+}
+.ab-body p + p {
+  margin-top: 18px;
+}
+.ab-body .ab-lead {
+  color: var(--ink);
+  font-size: clamp(22px, 2.2vw, 28px);
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+}
+.ab-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 32px;
+}
+.ab-rows > li {
+  display: grid;
+  grid-template-columns: minmax(0, 0.5fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 28px 0;
+  border-top: 1px solid var(--hairline);
+}
+.ab-rows > li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+.ab-rows h3 {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+.ab-rows p {
+  max-width: 54ch;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.ab-values {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.ab-values li {
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chip) 50%, transparent);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.ab-founder {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.ab-founder-photo {
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: #cdd0d4;
+}
+.ab-founder-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 12%;
+}
+.ab-founder-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(24px, 4vw, 56px);
+}
+.ab-founder-body .hm-sticker {
+  margin-left: 0;
+}
+.ab-founder-body blockquote {
+  max-width: 24ch;
+  margin: 24px 0 28px;
+  font-size: clamp(28px, 3.2vw, 44px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+.ab-founder-text {
+  display: grid;
+  gap: 14px;
+  max-width: 58ch;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.6;
+}
+.ab-founder-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 24px;
+  width: 100%;
+  margin-top: auto;
+  padding-top: 32px;
+}
+.ab-founder-foot p {
+  display: grid;
+  gap: 2px;
+}
+.ab-founder-foot span {
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.ab-statement {
+  max-width: 820px;
+  margin: 0 auto;
+  text-align: center;
+}
+.ab-statement .hm-title {
+  margin-bottom: 24px;
+}
+.ab-statement p {
+  max-width: 56ch;
+  margin: 0 auto;
+  color: var(--ink-2);
+  font-size: 19px;
+  line-height: 1.6;
+}
+@media (max-width: 900px) {
+  .ab-split,
+  .ab-founder {
+    grid-template-columns: 1fr;
+  }
+  .ab-side {
+    position: static;
+  }
+  .ab-founder-photo {
+    aspect-ratio: 4 / 5;
+    max-height: 520px;
+  }
+}
+@media (max-width: 640px) {
+  .ab-rows > li {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+.ab-partners {
+  padding: 8px 0 56px;
+}
+
+/* ---- Team page ---------------------------------------------------------------------------------- */
+.tm-lead {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(20px, 4vw, 56px);
+  align-items: center;
+  padding: clamp(20px, 3vw, 40px);
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+/* The chairman's photo is small, so it is shown at about its own size and stays sharp. */
+.tm-lead-photo {
+  width: clamp(180px, 20vw, 240px);
+  aspect-ratio: 228 / 220;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--chip);
+}
+.tm-lead-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.tm-lead-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.tm-lead-body .hm-sticker,
+.tm-dialog-body .hm-sticker {
+  margin-left: 0;
+}
+.hm .tm-lead-body h2,
+.hm .tm-dialog-body h2 {
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+.tm-lead-body p {
+  max-width: 62ch;
+  margin: 16px 0 24px;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.6;
+}
+.tm-heading {
+  margin-bottom: 40px;
+}
+.tm-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 32px 20px;
+}
+.tm-card {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  translate: 0 0;
+  transition: translate 0.9s var(--ease-glide);
+}
+.tm-photo {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.tm-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 12%;
+  scale: 1;
+  transition: scale 1.4s var(--ease-glide);
+}
+.tm-card strong {
+  display: block;
+  margin-top: 14px;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.tm-role {
+  display: -webkit-box;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.tm-card:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 6px;
+  border-radius: var(--radius-card);
+}
+/* The same hover as the other photo cards. */
+@media (hover: hover) {
+  .tm-card:hover {
+    translate: 0 -6px;
+  }
+  .tm-card:hover .tm-photo img {
+    scale: 1.06;
+  }
+}
+.tm-card:hover .hm-go,
+.tm-card:focus-visible .hm-go {
+  background: var(--red);
+  color: #fff;
+  transform: rotate(45deg);
+}
+.tm-dialog {
+  margin: auto;
+  width: min(960px, calc(100% - 32px));
+  max-height: calc(100dvh - 48px);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--canvas);
+  color: var(--ink);
+  overflow: hidden;
+  opacity: 0;
+  translate: 0 16px;
+  transition:
+    opacity 0.5s var(--ease-glide),
+    translate 0.5s var(--ease-glide),
+    overlay 0.5s allow-discrete,
+    display 0.5s allow-discrete;
+}
+.tm-dialog[open] {
+  opacity: 1;
+  translate: 0 0;
+}
+@starting-style {
+  .tm-dialog[open] {
+    opacity: 0;
+    translate: 0 16px;
+  }
+}
+.tm-dialog::backdrop {
+  background: rgba(8, 11, 16, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+html:has(.tm-dialog[open]) {
+  overflow: hidden;
+}
+.tm-dialog-in {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  max-height: calc(100dvh - 48px);
+}
+.tm-dialog-photo {
+  background: var(--canvas-2);
+}
+.tm-dialog-photo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 12%;
+}
+.tm-dialog-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(24px, 3.4vw, 44px);
+  overflow-y: auto;
+}
+.tm-bio {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.tm-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--canvas);
+  cursor: pointer;
+  transition: transform 0.5s var(--ease-glide);
+}
+.tm-close:hover {
+  transform: rotate(90deg);
+}
+.tm-close svg {
+  width: 14px;
+  height: 14px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+@media (max-width: 1000px) {
+  .tm-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 760px) {
+  .tm-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 14px;
+  }
+  .tm-lead {
+    grid-template-columns: 1fr;
+  }
+  .tm-dialog-in {
+    grid-template-columns: 1fr;
+    overflow-y: auto;
+  }
+  .tm-dialog-photo {
+    aspect-ratio: 4 / 3;
+  }
+  .tm-dialog-body {
+    overflow: visible;
+  }
+  .tm-photo .hm-chip {
+    top: 8px;
+    left: 8px;
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  .tm-photo .hm-go {
+    top: 8px;
+    right: 8px;
+    width: 30px;
+    height: 30px;
+  }
+  .tm-photo .hm-go svg {
+    width: 13px;
+    height: 13px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tm-card,
+  .tm-photo img,
+  .tm-dialog {
+    transition: none;
+  }
+  .tm-card:hover,
+  .tm-card:hover .tm-photo img {
+    translate: none;
+    scale: 1;
+  }
+}
+
+/* ---- Connect page ---------------------------------------------------------------------------------- */
+.cn-quote {
+  margin-top: clamp(40px, 6vw, 72px);
+  padding: clamp(28px, 5vw, 72px);
+  border-radius: var(--radius-card);
+  background: #0d1420;
+  color: #fff;
+}
+.cn-quote .hm-sticker {
+  margin-left: 0;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+}
+.cn-quote blockquote {
+  max-width: 40ch;
+  font-size: clamp(24px, 3vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.2;
+}
+.cn-heading {
+  margin-bottom: clamp(32px, 5vw, 56px);
+}
+.cn-vision {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(32px, 5vw, 56px) clamp(32px, 6vw, 96px);
+}
+.cn-vision li {
+  padding-top: 24px;
+  border-top: 1px solid var(--hairline);
+}
+.cn-vision h3 {
+  font-size: 24px;
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+.cn-vision p {
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.cn-vision p {
+  max-width: 48ch;
+  margin-top: 12px;
+}
+.cn-no {
+  display: block;
+  margin-bottom: 14px;
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.svc-info > h3 {
+  font-size: clamp(26px, 2.9vw, 40px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.08;
+}
+.cn-why {
+  margin-top: 32px;
+}
+.cn-why li {
+  display: grid;
+  grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 20px 0;
+  border-top: 1px solid var(--hairline);
+}
+.cn-why strong {
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.cn-why span {
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.5;
+}
+@media (max-width: 900px) {
+  .cn-vision {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 760px) {
+  .cn-why li {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+}
+
+/* ---- Opportunities page ---------------------------------------------------------------------------- */
+.opp-roles {
+  display: grid;
+  gap: 12px;
+  margin-top: 32px;
+}
+.opp-roles > li {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  padding: clamp(24px, 3vw, 36px);
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.opp-meta {
+  color: var(--ink-2);
+  font-size: 14px;
+}
+.opp-roles h3 {
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+.opp-roles > li > p:not(.opp-meta) {
+  max-width: 54ch;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.55;
+}
+.opp-roles .hm-btn {
+  margin-top: 8px;
+}
+.ab-body .opp-note {
+  margin-top: 24px;
+  color: var(--ink-2);
+  font-size: 15px;
+}
+.opp-note a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.opp-photo {
+  margin: 0 0 32px;
+  overflow: hidden;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.opp-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+}
+.opp-photo-wide {
+  margin: 0 0 clamp(32px, 5vw, 56px);
+}
+.opp-photo-wide img {
+  aspect-ratio: 2.6 / 1;
+  object-position: 50% 88%;
+}
+.opp-cta {
+  margin-top: clamp(32px, 5vw, 48px);
+}
+@media (max-width: 900px) {
+  .opp-photo-wide img {
+    aspect-ratio: 16 / 10;
+  }
+}
+
+/* ---- Engagement pages ------------------------------------------------------------------------------- */
+.en-intro {
+  margin-bottom: clamp(40px, 6vw, 72px);
+}
+.en-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.en-grid .tm-photo {
+  aspect-ratio: 4 / 3;
+}
+.en-grid .tm-photo img {
+  object-position: 50% 30%;
+}
+.en-grid + .ab-actions {
+  margin-top: clamp(32px, 5vw, 56px);
+}
+.en-note {
+  margin-top: 14px;
+  padding: 14px 18px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+  font-size: 15px;
+  line-height: 1.5;
+}
+.ab-rows > li > div > p + .ab-values,
+.ab-rows > li > div > .ab-values {
+  margin-top: 14px;
+}
+.ab-rows .ab-values {
+  margin-bottom: 0;
+}
+.en-link {
+  color: var(--ink);
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.ev-list {
+  display: grid;
+  gap: 24px;
+}
+.ev {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+  scroll-margin-top: calc(var(--header-h) + 24px);
+}
+.ev-photos {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  align-content: start;
+}
+.ev-photos img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  object-position: 50% 25%;
+  border-radius: var(--radius-card);
+  background: var(--chip);
+}
+.ev-photos .ev-main {
+  grid-column: 1 / -1;
+  aspect-ratio: 4 / 3;
+}
+.ev-body {
+  padding: clamp(16px, 2.6vw, 36px);
+}
+.ev-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.ev-pills span {
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chip) 70%, transparent);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.ev-body h2 {
+  max-width: 24ch;
+  font-size: clamp(22px, 2.4vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.12;
+}
+.ev-text {
+  display: grid;
+  gap: 14px;
+  max-width: 62ch;
+  margin-top: 18px;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.6;
+}
+.ev-more {
+  margin-top: 18px;
+  interpolate-size: allow-keywords;
+}
+.ev-more summary {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 500;
+  list-style: none;
+  cursor: pointer;
+}
+.ev-more summary::-webkit-details-marker {
+  display: none;
+}
+.ev-more summary::after {
+  content: "+";
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding-bottom: 2px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: var(--canvas);
+  font-size: 18px;
+  line-height: 1;
+  transition: transform 0.5s var(--ease-glide);
+}
+.ev-more[open] summary::after {
+  transform: rotate(135deg);
+}
+.ev-more::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size 0.5s var(--ease-glide),
+    content-visibility 0.5s allow-discrete;
+}
+.ev-more[open]::details-content {
+  block-size: auto;
+}
+.ev-meta {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--hairline);
+}
+.ev-meta dt {
+  color: var(--ink-2);
+  font-size: 13px;
+}
+.ev-meta dd {
+  margin: 2px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+}
+@media (max-width: 1000px) {
+  .en-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .ev {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 560px) {
+  .en-grid {
+    grid-template-columns: 1fr;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ev-more::details-content,
+  .ev-more summary::after {
+    transition: none;
+  }
+}
+
+/* ---- Travel page: the partner directory ----------------------------------------------------------- */
+.pt-note {
+  max-width: 68ch;
+  margin-bottom: 8px;
+  color: var(--ink-2);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.pt-note a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pt-list {
+  margin-top: 16px;
+}
+.pt-row {
+  display: grid;
+  grid-template-columns: 148px minmax(0, 1fr) auto;
+  gap: clamp(20px, 3vw, 40px);
+  align-items: center;
+  padding: 28px 0;
+  border-top: 1px solid var(--hairline);
+  animation: svc-in 0.7s var(--ease-glide) both;
+}
+.pt-row:last-child {
+  border-bottom: 1px solid var(--hairline);
+}
+.pt-logo {
+  display: grid;
+  place-items: center;
+  height: 84px;
+  padding: 14px 18px;
+  border-radius: var(--radius-card);
+  background: var(--canvas-2);
+}
+.pt-logo img {
+  display: block;
+  max-width: 100%;
+  max-height: 52px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.hm .pt-body h2 {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.15;
+}
+.pt-kind {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chip) 60%, transparent);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.2;
+}
+.pt-body p {
+  max-width: 56ch;
+  margin-top: 6px;
+  color: var(--ink-2);
+  font-size: 16px;
+  line-height: 1.5;
+}
+.pt-body .pt-line {
+  color: var(--ink);
+  font-size: 17px;
+}
+@media (max-width: 860px) {
+  .pt-row {
+    grid-template-columns: 110px minmax(0, 1fr);
+    align-items: start;
+  }
+  .pt-row .hm-btn {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+  .pt-logo {
+    height: 72px;
+  }
+}
+@media (max-width: 520px) {
+  .pt-row {
+    grid-template-columns: 1fr;
+  }
+  .pt-logo {
+    width: 140px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pt-row {
+    animation: none;
+  }
+}
+
+/* ---- Legal pages: the document with an "on this page" list beside it ------------------------------ */
+.lg-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+.lg-side {
+  position: sticky;
+  top: calc(var(--header-h) + 24px);
+  max-height: calc(100dvh - var(--header-h) - 48px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+.lg-toc summary,
+.hm .lg-others h2 {
+  margin-bottom: 12px;
+  color: var(--ink-2);
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+.lg-toc summary {
+  list-style: none;
+  cursor: default;
+}
+.lg-toc summary::-webkit-details-marker {
+  display: none;
+}
+.lg-toc ul {
+  display: grid;
+  gap: 2px;
+}
+.lg-toc a {
+  display: block;
+  padding: 7px 12px;
+  margin-left: -12px;
+  border-radius: 8px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.35;
+  transition:
+    background-color 0.4s var(--ease-soft),
+    color 0.4s var(--ease-soft);
+}
+.lg-toc a:hover {
+  color: var(--ink);
+}
+.lg-toc a[aria-current] {
+  background: color-mix(in srgb, var(--chip) 55%, transparent);
+  color: var(--ink);
+  font-weight: 500;
+}
+.lg-main {
+  min-width: 0;
+}
+.lg-others {
+  max-width: 74ch;
+  margin-top: 72px;
+}
+.hm .lg-others h2 {
+  margin-bottom: 14px;
+}
+.lg-others ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.lg-others a {
+  display: block;
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--chip) 50%, transparent);
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.2;
+  transition: background-color 0.4s var(--ease-soft);
+}
+.lg-others a:hover {
+  background: var(--chip);
+}
+.lg-others a[aria-current] {
+  background: var(--ink);
+  color: var(--canvas);
+}
+.lg-body {
+  max-width: 74ch;
+  color: var(--ink-2);
+  font-size: 17px;
+  line-height: 1.7;
+}
+.lg-body p + p,
+.lg-body ul + p,
+.lg-body p + ul {
+  margin-top: 16px;
+}
+.lg-body strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.lg-body a {
+  color: var(--ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.hm .lg-body h2 {
+  margin: 56px 0 16px;
+  scroll-margin-top: calc(var(--header-h) + 24px);
+  color: var(--ink);
+  font-size: clamp(24px, 2.4vw, 30px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+.lg-body > p:first-child + p + h2,
+.hm .lg-body h2:first-child {
+  margin-top: 40px;
+}
+.hm .lg-body h3 {
+  margin: 28px 0 10px;
+  color: var(--ink);
+  font-size: 19px;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.lg-body ul {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+.lg-body li {
+  position: relative;
+  padding-left: 22px;
+}
+.lg-body li::before {
+  content: "";
+  position: absolute;
+  top: 0.72em;
+  left: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ink-2);
+}
+@media (max-width: 900px) {
+  .lg-layout {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .lg-side {
+    position: static;
+    max-height: none;
+    overflow: visible;
+  }
+  .lg-toc summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0;
+    padding: 14px 16px;
+    border-radius: var(--radius-card);
+    background: var(--canvas-2);
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .lg-toc[open] summary {
+    margin-bottom: 12px;
+  }
+  .lg-toc summary::after {
+    content: "+";
+    font-size: 20px;
+    line-height: 1;
+  }
+  .lg-toc[open] summary::after {
+    content: "\2212";
+  }
+}
+
+/* ---- Error and not-found pages -------------------------------------------------------------------- */
+.er {
+  display: flex;
+  align-items: center;
+  min-height: min(72vh, 680px);
+  padding-top: calc(var(--header-h) + 40px);
+}
+.er .hm-wrap {
+  width: 100%;
+}
+.er .hm-title {
+  margin-bottom: 20px;
+}
+.er-text {
+  max-width: 46ch;
+  color: var(--ink-2);
+  font-size: 19px;
+  line-height: 1.55;
+}
+.er .ab-actions {
+  margin-top: 32px;
+}
+.er-ref {
+  margin-top: 28px;
+  color: var(--ink-2);
+  font-size: 13px;
+}
+
+/* The blog cards are not links until there are posts: the same look, without the hover. */
+.bl-static {
+  cursor: default;
+}
+@media (hover: hover) {
+  .bl-static:hover,
+  .bl-static:hover .tm-photo img {
+    translate: none;
+    scale: 1;
+  }
+}

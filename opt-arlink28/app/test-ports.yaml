@@ -1,0 +1,7 @@
+# TEMPORARY: lets you test through an SSH tunnel. Bound to the server's loopback only, so nothing is
+# reachable from the internet. Remove with:  sudo docker compose up -d   (without -f test-ports.yaml)
+services:
+  web:
+    ports: ["127.0.0.1:13000:3000"]
+  api:
+    ports: ["127.0.0.1:18080:8080"]

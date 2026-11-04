@@ -1,0 +1,40 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js & Build outputs
+.next/
+.next-*/
+out/
+dist/
+.turbo/
+*.tsbuildinfo
+
+# .NET / C#
+bin/
+obj/
+*.user
+*.suo
+*.userprefs
+.vs/
+
+# Bundles & large archives
+*.bundle
+api-local-storage/
+local-storage/
+
+# Environment files
+.env*.local
+.env
+secrets/
+opt-arlink28/secrets/
+appsettings.*.local.json
+secrets.json
+
+# Logs & temp
+logs/
+*.log
+.tmp/
+.claude/
+test-results/
+playwright-report/
