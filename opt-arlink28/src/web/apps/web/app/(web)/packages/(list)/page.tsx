@@ -85,7 +85,7 @@ function sortItems(items: Card[], sort?: string): Card[] {
     case "nights":
       return copy.sort((a, b) => a.nights - b.nights);
     default:
-      return copy.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0) || a.sortOrder - b.sortOrder);
+      return copy.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
   }
 }
 
