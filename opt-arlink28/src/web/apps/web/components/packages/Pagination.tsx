@@ -17,18 +17,22 @@ export default function Pagination({
   page,
   pageSize,
   total,
+  totalPages,
+  customShowingText,
   hrefFor,
   noun = "packages",
 }: {
   page: number;
   pageSize: number;
   total: number;
+  totalPages?: number;
+  customShowingText?: string;
   /** The address of a page, keeping the current filters. */
   hrefFor: (page: number) => string;
   /** What is being counted, plural. */
   noun?: string;
 }) {
-  const pages = Math.ceil(total / pageSize);
+  const pages = totalPages ?? Math.ceil(total / pageSize);
   if (pages <= 1) return null;
   const from = (page - 1) * pageSize + 1;
   const to = Math.min(total, page * pageSize);
@@ -36,7 +40,7 @@ export default function Pagination({
   return (
     <nav className="pkgs-pager" aria-label="Pages">
       <p>
-        Showing {from} to {to} of {total} {noun}
+        {customShowingText || `Showing ${from} to ${to} of ${total} ${noun}`}
       </p>
       <ul>
         <li>

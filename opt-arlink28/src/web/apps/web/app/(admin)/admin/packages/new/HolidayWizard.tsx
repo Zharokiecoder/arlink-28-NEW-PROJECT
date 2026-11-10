@@ -30,6 +30,7 @@ import { ReviewRow, SummaryRow } from "@/components/admin/WizardParts";
 import { adminPackagesApi } from "@/utils/api/packages";
 import { Crumbs, Skeleton, Spinner } from "@/components/admin/ui";
 import { money, party, toMinor } from "@/components/admin/format";
+import { categoryLabel } from "@/utils/packages";
 
 const STEPS = [
   { id: "basics", label: "Basics", note: "Name and destination" },
@@ -405,7 +406,7 @@ export default function HolidayWizard() {
                         {values.title.trim() || "No name yet"}
                         <small>
                           {destination ? `${destination.name}, ${destination.country}` : "No destination"},{" "}
-                          {values.category === "LODGE" ? "lodge stay" : "safari"}
+                          {categoryLabel(values.category).toLowerCase()}
                         </small>
                       </ReviewRow>
                       <ReviewRow label="Party and length" onChange={() => goTo(STEP_INDEX.basics)}>

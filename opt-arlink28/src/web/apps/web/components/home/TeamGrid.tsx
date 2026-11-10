@@ -16,7 +16,8 @@ const Arrow = () => (
  * full biography in a dialog, so the page itself stays short.
  */
 export default function TeamGrid({ people }: { people: Person[] }) {
-  const [lead, ...rest] = people;
+  const lead = people.find((p: any) => p.isLeadership) ?? people[0];
+  const rest = lead ? people.filter((p) => p !== lead) : [];
   const [open, setOpen] = useState<Person | null>(null);
   const dialog = useRef<HTMLDialogElement>(null);
   const opener = useRef<HTMLElement | null>(null);

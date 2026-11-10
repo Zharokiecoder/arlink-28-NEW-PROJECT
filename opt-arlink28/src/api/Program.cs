@@ -337,6 +337,7 @@ try
     {
         var initialiser = scope.ServiceProvider.GetRequiredService<DataContextInitializer>();
         await initialiser.SeedSuperAdminAsync();
+        await initialiser.EnsureTeamMembersAsync();
     }
 
     app.UseMiddleware<ExceptionHandlingMiddleware>();

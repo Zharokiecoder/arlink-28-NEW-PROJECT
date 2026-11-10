@@ -1,4 +1,4 @@
-import type { ChangeEvent } from "react";
+import { useState, useEffect, type ChangeEvent } from "react";
 import type { DestinationResponse, PropertyOption } from "@arlink28/api-client";
 import TypeDetailsFields from "@/components/admin/TypeDetailsFields";
 import { isHoliday, type DetailValues, type OtherType, type ProductType } from "@/utils/productTypes";
@@ -107,6 +107,15 @@ export default function PackageFields({
   properties,
 }: Props) {
   const holiday = isHoliday(values.productType);
+  const isPresetCategory = values.category === "SAFARI" || values.category === "LODGE";
+  const [isManualCategory, setIsManualCategory] = useState(!isPresetCategory && Boolean(values.category));
+
+  useEffect(() => {
+    if (!isPresetCategory && Boolean(values.category)) {
+      setIsManualCategory(true);
+    }
+  }, [values.category, isPresetCategory]);
+
   const set = <K extends keyof PackageFormValues>(key: K, value: PackageFormValues[K]) =>
     onChange({ ...values, [key]: value });
   const number = (key: "nights" | "minNights" | "adults" | "children") => (e: ChangeEvent<HTMLInputElement>) =>
@@ -171,20 +180,72 @@ export default function PackageFields({
             </div>
             {holiday && (
               <div className="field">
-                <label htmlFor="pkg-category">Style</label>
-                <select
-                  id="pkg-category"
-                  className="input"
-                  value={values.category}
-                  onChange={(e) => set("category", e.target.value)}
-                  disabled={disabled}
-                >
-                  {CATEGORIES.map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <label htmlFor="pkg-category">Style</label>
+                  <button
+                    type="button"
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#0969da",
+                      fontSize: "12px",
+                      cursor: "pointer",
+                      textDecoration: "underline",
+                      padding: 0,
+                    }}
+                    onClick={() => {
+                      const next = !isManualCategory;
+                      setIsManualCategory(next);
+                      if (!next && !isPresetCategory) {
+                        set("category", "SAFARI");
+                      }
+                    }}
+                  >
+                    {isManualCategory ? "Choose from list" : "Enter manually"}
+                  </button>
+                </div>
+                {!isManualCategory ? (
+                  <select
+                    id="pkg-category"
+                    className="input"
+                    value={values.category || "SAFARI"}
+                    onChange={(e) => {
+                      if (e.target.value === "__MANUAL__") {
+                        setIsManualCategory(true);
+                        set("category", "");
+                      } else {
+                        set("category", e.target.value);
+                      }
+                    }}
+                    disabled={disabled}
+                  >
+                    {CATEGORIES.map(([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ))}
+                    <option value="__MANUAL__">Enter manually...</option>
+                  </select>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                    <input
+                      id="pkg-category"
+                      className="input"
+                      type="text"
+                      value={values.category}
+                      onChange={(e) => set("category", e.target.value)}
+                      placeholder="e.g. Beach Resort, Luxury Villa, Desert Camp"
+                      maxLength={50}
+                      required
+                      disabled={disabled}
+                      autoFocus
+                    />
+                    <small style={{ color: "#666", fontSize: "11px" }}>
+                      Type a custom style name or click &quot;Choose from list&quot; to pick a preset.
+                    </small>
+                  </div>
+                )}
+                <FieldError name="category" errors={fieldErrors} />
               </div>
             )}
           </div>

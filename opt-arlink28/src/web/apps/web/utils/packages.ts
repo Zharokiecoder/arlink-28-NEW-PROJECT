@@ -15,7 +15,12 @@ export function partyLabel(adults: number, children: number): string {
   return children > 0 ? `${a}, ${children} ${children === 1 ? "child" : "children"}` : a;
 }
 
-export const categoryLabel = (category: string) => (category === "LODGE" ? "Lodge stay" : "Safari");
+export const categoryLabel = (category: string) => {
+  if (!category) return "Safari";
+  if (category === "LODGE") return "Lodge stay";
+  if (category === "SAFARI") return "Safari";
+  return category;
+};
 
 const UNITS: Record<string, string> = {
   PerStay: "per stay",

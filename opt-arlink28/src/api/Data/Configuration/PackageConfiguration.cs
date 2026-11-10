@@ -17,13 +17,13 @@ public class PackageConfiguration : IEntityTypeConfiguration<Package>
         builder.HasIndex(p => new { p.ProductType, p.Status });
         builder.Property(p => p.Status).HasConversion<string>().HasMaxLength(20).IsRequired();
         builder.Property(p => p.Title).HasMaxLength(200).IsRequired();
-        builder.Property(p => p.Subtitle).HasMaxLength(200);
-        builder.Property(p => p.Summary).HasMaxLength(500);
+        builder.Property(p => p.Subtitle).HasColumnType("text");
+        builder.Property(p => p.Summary).HasColumnType("text");
         builder.Property(p => p.Category).HasMaxLength(50).IsRequired();
         builder.Property(p => p.PricingBasis).HasConversion<string>().HasMaxLength(20).IsRequired();
         builder.Property(p => p.BaseCurrency).HasMaxLength(3).IsRequired().IsFixedLength();
         builder.Property(p => p.SeoTitle).HasMaxLength(70);
-        builder.Property(p => p.SeoDescription).HasMaxLength(160);
+        builder.Property(p => p.SeoDescription).HasMaxLength(300);
 
         builder.HasOne(p => p.Destination)
             .WithMany(d => d.Packages)

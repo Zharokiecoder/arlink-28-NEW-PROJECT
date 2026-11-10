@@ -49,7 +49,7 @@ export const ELITE_TIERS: EliteTier[] = [
       "Special dietary and hospitality requirements where available",
     ],
     image: "/images/home/jet-sunset-1600.webp",
-    alt: "A private jet parked on the tarmac at golden hour",
+    alt: "Rear view of luxury private jet with twin engines on the tarmac",
   },
   {
     slug: "arlink28-bespoke",

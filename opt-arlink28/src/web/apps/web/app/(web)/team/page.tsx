@@ -6,7 +6,9 @@ import FaqSection from "@/components/home/FaqSection";
 import Reveal from "@/components/home/Reveal";
 import { SERVICE_FAQS } from "@/content/service-faqs";
 import TeamGrid from "@/components/home/TeamGrid";
-import { TEAM } from "@/content/team";
+import { loadTeamMembers } from "@/utils/server/team";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Team | ARLink28",
@@ -14,12 +16,14 @@ export const metadata: Metadata = {
     "The advisory chairman and the coordinators behind ARLink28, across aviation, finance, technology, partnerships, people and customer experience.",
 };
 
-export default function TeamPage() {
+export default async function TeamPage() {
+  const people = await loadTeamMembers();
+
   return (
     <div className="hm">
       <Reveal />
       <PageBanner
-        photo="namibia"
+        photo="team"
         label="Our team"
         title={
           <>
@@ -30,7 +34,7 @@ export default function TeamPage() {
         }
         intro="Our advisory chairman and ten coordinators, from aviation and finance to technology, partnerships and customer experience."
       />
-      <TeamGrid people={TEAM} />
+      <TeamGrid people={people} />
       <FaqSection items={SERVICE_FAQS.team} />
       <ClosingCta bleed />
     </div>

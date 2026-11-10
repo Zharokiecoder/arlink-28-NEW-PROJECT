@@ -175,7 +175,7 @@ export default async function EliteJetsPage({ searchParams }: Search) {
         }
         steps={STEPS}
         photo="/images/home/jet-sunset-1600.webp"
-        focus="50% 60%"
+        focus="50% 50%"
         cta={{ href: "/contact?type=Booking", label: "Book a charter" }}
       />
 

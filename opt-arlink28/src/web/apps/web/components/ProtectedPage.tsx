@@ -21,6 +21,7 @@ const NAV: NavItem[] = [
   { href: "/admin/packages", label: "Packages", icon: "fa-suitcase-rolling" },
   { href: "/admin/destinations", label: "Destinations", icon: "fa-earth-africa" },
   { href: "/admin/properties", label: "Properties", icon: "fa-hotel" },
+  { href: "/admin/team", label: "Team", icon: "fa-users" },
   { href: "/admin/enquiries", label: "Enquiries", icon: "fa-inbox" },
   { href: "/admin/users", label: "Staff", icon: "fa-user-group", superAdminOnly: true },
   { href: "/admin/change-password", label: "Password", icon: "fa-key" },

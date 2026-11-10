@@ -14,7 +14,7 @@ type Props = {
   /** The page docks a search bar into the card's bottom edge: leaves room for it. */
   overlap?: boolean;
   /** Which photo: the safari by default; holidays, flights, hotels, visas, Elite Jets, the Namibia desert and Destinations each have their own. */
-  photo?: "banner" | "holidays" | "flights" | "hotels" | "visas" | "elite" | "namibia" | "destinations";
+  photo?: "banner" | "holidays" | "flights" | "hotels" | "visas" | "elite" | "namibia" | "destinations" | "team";
   id?: string;
 };
 

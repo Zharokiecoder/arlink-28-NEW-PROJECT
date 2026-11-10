@@ -25,6 +25,7 @@ public class ApplicationDbContext : DbContext
     public virtual DbSet<AuditLog> AuditLogs { get; set; }
     public virtual DbSet<Staff> Staff { get; set; }
     public virtual DbSet<StaffToken> StaffTokens { get; set; }
+    public virtual DbSet<TeamMember> TeamMembers { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
