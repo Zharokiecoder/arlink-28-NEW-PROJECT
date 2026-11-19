@@ -10,37 +10,36 @@ import type { HeroSlide } from "@/components/home/HeroSlides";
 export const HERO_SLIDES: HeroSlide[] = [
   {
     region: "Africa",
-    place: "Serengeti",
-    blurb: "Lantern-lit tented camps under a wide East African sky.",
+    place: "Morocco",
+    blurb: "Luxury poolside retreats framed by palms and golden stone.",
     sizes: [
       { src: "/images/home/slide-serengeti-1280.webp", w: 1280 },
       { src: "/images/home/slide-serengeti-1920.webp", w: 1920 },
-      { src: "/images/home/slide-serengeti-2453.webp", w: 2453 },
     ],
     thumb: "/images/home/slide-serengeti-thumb.webp",
-    focus: "50% 72%", // the tree and the tents sit low in the frame
+    focus: "50% 50%",
   },
   {
     region: "Africa",
-    place: "Namibia",
-    blurb: "Desert silence and sunset colour from a private terrace.",
+    place: "Safari",
+    blurb: "Elephant families crossing golden rivers at sunset.",
     sizes: [
       { src: "/images/home/slide-namibia-1280.webp", w: 1280 },
       { src: "/images/home/slide-namibia-1920.webp", w: 1920 },
     ],
     thumb: "/images/home/slide-namibia-thumb.webp",
-    focus: "50% 60%",
+    focus: "50% 45%",
   },
   {
     region: "Africa",
-    place: "Knysna",
-    blurb: "Clear blue water and green headlands on South Africa's coast.",
+    place: "Zanzibar",
+    blurb: "Beachfront pools and palm-shaded lounges on the Indian Ocean.",
     sizes: [
       { src: "/images/home/slide-knysna-1280.webp", w: 1280 },
       { src: "/images/home/slide-knysna-1920.webp", w: 1920 },
       { src: "/images/home/slide-knysna-2048.webp", w: 2048 },
     ],
     thumb: "/images/home/slide-knysna-thumb.webp",
-    focus: "50% 45%", // keep the bay in view above the stairs
+    focus: "50% 40%",
   },
 ];

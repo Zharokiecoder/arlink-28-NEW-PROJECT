@@ -5,14 +5,9 @@ export type BlogTeaser = { title: string; image: string; alt: string };
 
 export const BLOG_TEASERS: BlogTeaser[] = [
   {
-    title: "Lagos to London: what to know before you fly",
-    image: "/images/home/route-lhr.webp",
-    alt: "Big Ben and the London Eye under a blue sky",
-  },
-  {
-    title: "Dubai from Abuja: a plain checklist for visas and flights",
-    image: "/images/home/route-dxb.webp",
-    alt: "The Dubai skyline at sunset, with the Burj Khalifa",
+    title: "Dakar to Marrakesh: a plain checklist for visas and flights",
+    image: "/images/home/route-dkr.webp",
+    alt: "The African Renaissance Monument in Dakar under a blue sky",
   },
   {
     title: "Zanzibar for first-timers: when to go and where to stay",
