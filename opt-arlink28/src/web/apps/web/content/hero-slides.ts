@@ -21,14 +21,14 @@ export const HERO_SLIDES: HeroSlide[] = [
   },
   {
     region: "Africa",
-    place: "Safari",
-    blurb: "Elephant families crossing golden rivers at sunset.",
+    place: "Private Aviation",
+    blurb: "Fly private across Africa with ARLink28 Elite.",
     sizes: [
       { src: "/images/home/slide-namibia-1280.webp", w: 1280 },
       { src: "/images/home/slide-namibia-1920.webp", w: 1920 },
     ],
     thumb: "/images/home/slide-namibia-thumb.webp",
-    focus: "50% 45%",
+    focus: "50% 55%",
   },
   {
     region: "Africa",

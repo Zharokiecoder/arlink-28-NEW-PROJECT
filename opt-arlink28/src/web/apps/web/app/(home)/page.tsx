@@ -18,7 +18,6 @@ import {
   GOOGLE_REVIEWS_URL,
   HAPPY,
   PARTNERS,
-  RATING,
   REVIEWS,
   REVIEW_BYLINE,
   REVIEW_SUMMARY,
@@ -151,12 +150,7 @@ export default async function HomePage() {
               <p className="hm-hero-sub">
                 Flights, hotels, visas and holidays, arranged by people who know the routes.
               </p>
-              <p className="hm-rating">
-                <b className="hm-rating-score">
-                  {RATING.value} <span aria-hidden="true">{"★"}</span>
-                </b>{" "}
-                on {RATING.platform} ({RATING.count})
-              </p>
+
             </div>
             <QuoteWidget />
           </div>
@@ -268,23 +262,7 @@ export default async function HomePage() {
               { ...WHY[4], src: "/images/home/slide-knysna-1280.webp", pos: "50% 45%" },
             ]}
             cta={{ href: "/quote", label: "Get a quote" }}
-          >
-            <div className="hm-proof" data-rv>
-              <div className="hm-proof-card">
-                <p className="hm-proof-rating">
-                  <span className="hm-stars" aria-hidden="true">
-                    {"★★★★★"}
-                  </span>
-                  <b>{REVIEW_SUMMARY.score}</b>
-                  <span>on Google</span>
-                </p>
-                <p className="hm-proof-small">{RATING.count}</p>
-                <p className="hm-proof-count">
-                  <b>{HAPPY.value}</b> {HAPPY.label}
-                </p>
-              </div>
-            </div>
-          </HoverList>
+          />
         </div>
       </section>
 
